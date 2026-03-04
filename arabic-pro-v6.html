@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق تعلم اللغة العربية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8b5e1a;
+  --deep:#1a0a2e;--deep2:#2d1b4e;--deep3:#0d0518;
+  --teal:#00c9a7;--rose:#ff6b9d;--sky:#4fc3f7;--lime:#a8e063;
+  --card:rgba(255,255,255,0.06);--border:rgba(201,168,76,0.22);
+  --text:#f0e6d3;--dim:#a89070;--r:20px;--fs:16px;
+}
+[data-theme=light]{--deep:#f5f0e8;--deep2:#ede5d5;--deep3:#faf6ee;--card:rgba(255,255,255,0.88);--border:rgba(180,140,60,0.28);--text:#2a1a05;--dim:#7a6040;}
+[data-theme=ocean]{--deep:#021b3d;--deep2:#032654;--deep3:#010e24;--gold:#00d4ff;--gold-l:#80eaff;--gold-d:#006b90;--card:rgba(0,100,160,0.13);--border:rgba(0,212,255,0.22);--text:#d0f0ff;--dim:#6aaccc;}
+[data-theme=forest]{--deep:#0d2b0d;--deep2:#1a3d1a;--deep3:#071507;--gold:#7ed321;--gold-l:#b5f55a;--gold-d:#4a8010;--card:rgba(0,80,0,0.16);--border:rgba(126,211,33,0.25);--text:#d8f5d0;--dim:#7aaa60;}
+[data-theme=rose]{--deep:#2d0a1a;--deep2:#4d1530;--deep3:#1a0510;--gold:#ff6b9d;--gold-l:#ffb3d1;--gold-d:#c2185b;--card:rgba(255,107,157,0.1);--border:rgba(255,107,157,0.25);--text:#ffe0ec;--dim:#cc8899;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:var(--fs);}
+body{font-family:'Tajawal',sans-serif;background:var(--deep);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden;transition:background .5s,color .5s;}
+#pCvs{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* ── SECURITY ── */
+#secBadge{position:fixed;bottom:20px;right:20px;z-index:999;background:linear-gradient(135deg,rgba(0,201,107,.15),rgba(0,80,40,.25));border:1px solid rgba(0,201,107,.4);border-radius:50px;padding:8px 16px;font-size:.76rem;color:#00c96b;display:flex;align-items:center;gap:6px;backdrop-filter:blur(10px);cursor:pointer;transition:all .3s;}
+#secBadge:hover{transform:scale(1.05);}
+.sdot{width:8px;height:8px;border-radius:50%;background:#00c96b;animation:sPulse 2s infinite;}
+@keyframes sPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,201,107,.4);}50%{box-shadow:0 0 0 6px rgba(0,201,107,0);}}
+/* ── HEADER ── */
+header{position:relative;z-index:50;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:rgba(26,10,46,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+[data-theme=light] header{background:rgba(245,240,232,.94);}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Amiri',serif;font-size:1.55rem;font-weight:700;color:var(--gold-l);}
+.lbox{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-d));display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 4px 18px rgba(201,168,76,.45);animation:lPulse 3s ease-in-out infinite;}
+@keyframes lPulse{0%,100%{box-shadow:0 4px 18px rgba(201,168,76,.45);}50%{box-shadow:0 4px 30px rgba(201,168,76,.7);}}
+/* ── CLOCK ── */
+.clk{background:rgba(201,168,76,.1);border:1px solid var(--border);border-radius:12px;padding:7px 14px;text-align:center;min-width:120px;}
+.clkT{font-size:1.25rem;font-weight:800;color:var(--gold-l);letter-spacing:2px;}
+.clkD{font-size:.68rem;color:var(--dim);margin-top:1px;}
+.clkH{font-size:.64rem;color:var(--gold);margin-top:1px;}
+/* ── HEADER ICONS ── */
+.hrow{display:flex;gap:7px;align-items:center;}
+.ibtn{width:34px;height:34px;border-radius:9px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:all .2s;color:var(--text);}
+.ibtn:hover{background:rgba(201,168,76,.15);border-color:var(--gold);transform:scale(1.1);}
+/* ── SPEAKER ── */
+#spkAvatar{position:fixed;left:16px;bottom:76px;z-index:200;cursor:pointer;}
+.avBody{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-d));display:flex;align-items:center;justify-content:center;font-size:1.7rem;box-shadow:0 4px 20px rgba(201,168,76,.5);transition:all .3s;position:relative;}
+.avBody:hover{transform:scale(1.1);}
+.aw1,.aw2{position:absolute;border-radius:50%;border:2px solid rgba(201,168,76,.3);}
+.aw1{inset:-5px;}.aw2{inset:-12px;}
+.spk .aw1{animation:sWave .7s ease-in-out infinite;}
+.spk .aw2{animation:sWave .7s ease-in-out .18s infinite;}
+.spk .avBody{box-shadow:0 0 28px rgba(201,168,76,.75);}
+@keyframes sWave{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.35);opacity:0;}}
+#vStatus{position:absolute;top:-7px;right:-3px;width:17px;height:17px;border-radius:50%;background:#00c96b;font-size:.5rem;display:flex;align-items:center;justify-content:center;border:2px solid var(--deep);}
+#vBars{display:flex;align-items:center;gap:3px;height:20px;margin-top:3px;justify-content:center;}
+.vb{width:4px;background:var(--gold);border-radius:2px;height:4px;}
+.spkBars .vb{animation:bDnc .45s ease-in-out infinite;}
+.vb:nth-child(1){animation-delay:0s}.vb:nth-child(2){animation-delay:.09s}.vb:nth-child(3){animation-delay:.18s}.vb:nth-child(4){animation-delay:.09s}.vb:nth-child(5){animation-delay:0s}
+@keyframes bDnc{0%,100%{height:4px;}50%{height:18px;}}
+.avLbl{text-align:center;font-size:.62rem;color:var(--dim);margin-top:3px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2px 6px;}
+/* ── TABS ── */
+.tabs{position:relative;z-index:40;display:flex;padding:0 22px;background:rgba(13,5,24,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+[data-theme=light] .tabs{background:rgba(237,229,213,.88);}
+.tab{padding:12px 16px;cursor:pointer;color:var(--dim);font-size:.88rem;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;transition:all .3s;display:flex;align-items:center;gap:5px;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--gold-l);border-bottom-color:var(--gold);}
+/* ── MAIN ── */
+main{position:relative;z-index:5;max-width:1060px;margin:0 auto;padding:22px 16px 110px;}
+.sec{display:none;animation:fuP .4s ease;}
+.sec.on{display:block;}
+@keyframes fuP{from{opacity:0;transform:translateY(11px);}to{opacity:1;transform:translateY(0);}}
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;backdrop-filter:blur(10px);transition:background .5s,border .5s;}
+.card:hover{border-color:var(--gold);}
+/* ── SECTION TITLE ── */
+.st{font-family:'Amiri',serif;font-size:1.4rem;color:var(--gold-l);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.st::after{content:'';flex:1;height:1px;background:linear-gradient(to left,var(--border),transparent);}
+/* ── WELCOME ── */
+.wlc{background:linear-gradient(135deg,rgba(201,168,76,.13),rgba(0,201,167,.07));border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.wlc h2{font-family:'Amiri',serif;font-size:1.65rem;color:var(--gold-l);margin-bottom:4px;}
+.wlc p{color:var(--dim);font-size:.92rem;}
+.dsgn{font-size:.76rem;color:var(--gold);background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:50px;padding:4px 13px;margin-top:7px;display:inline-block;}
+/* ── STATS ── */
+.srow{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:11px;margin-bottom:22px;}
+.sbox{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:15px;text-align:center;transition:transform .2s;cursor:default;}
+.sbox:hover{transform:translateY(-3px);}
+.snum{font-size:1.7rem;font-weight:900;color:var(--gold-l);}
+.slbl{font-size:.72rem;color:var(--dim);margin-top:2px;}
+/* ── LEVELS ── */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:14px;margin-bottom:22px;}
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:19px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.lcard::before{content:'';position:absolute;top:-20px;right:-20px;width:90px;height:90px;border-radius:50%;background:var(--gl,rgba(201,168,76,.14));pointer-events:none;}
+.lcard:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 12px 35px rgba(201,168,76,.14);}
+.ltag{display:inline-block;padding:3px 11px;border-radius:50px;font-size:.7rem;font-weight:700;margin-bottom:7px;}
+.lbar{height:5px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden;margin-top:10px;}
+.lbf{height:100%;border-radius:10px;transition:width 1.1s ease;}
+/* ── ALPHA ── */
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:9px;margin-bottom:18px;}
+.ltr{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 5px;text-align:center;cursor:pointer;transition:all .3s;}
+.ltr:hover{background:rgba(201,168,76,.12);border-color:var(--gold);transform:scale(1.07);}
+.ltr.ok{background:rgba(0,201,167,.1);border-color:var(--teal);}
+.lbig{font-family:'Amiri',serif;font-size:1.85rem;color:var(--gold-l);display:block;}
+.lnm{font-size:.66rem;color:var(--dim);margin-top:2px;}
+/* ── LETTER DETAIL ── */
+#ldet{display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px;text-align:center;margin-top:16px;animation:fuP .3s ease;}
+.lhero{font-family:'Amiri',serif;font-size:6.5rem;color:var(--gold-l);line-height:1;margin-bottom:8px;}
+.frow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
+.fchip{font-family:'Amiri',serif;font-size:1.6rem;color:var(--gold-l);background:rgba(201,168,76,.08);padding:7px 14px;border-radius:9px;border:1px solid var(--border);}
+/* ── VOCAB ── */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:11px;}
+.vc{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:15px;cursor:pointer;transition:all .3s;position:relative;}
+.vc:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 8px 20px rgba(201,168,76,.1);}
+.va{font-family:'Amiri',serif;font-size:1.5rem;color:var(--gold-l);margin-bottom:4px;}
+.ve{font-size:.8rem;color:var(--dim);}
+.vfav{position:absolute;top:9px;left:11px;cursor:pointer;font-size:.95rem;transition:transform .2s;}
+.vfav:hover{transform:scale(1.3);}
+/* ── GRAMMAR ── */
+.git{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .3s;margin-bottom:11px;}
+.git:hover{border-color:var(--gold);}
+.ghd{padding:15px 19px;display:flex;align-items:center;justify-content:space-between;}
+.ghd h3{font-size:.97rem;font-weight:700;}
+.gbd{display:none;padding:0 19px 17px;border-top:1px solid var(--border);}
+.gbd.op{display:block;animation:fuP .3s ease;}
+.gbd p{color:var(--dim);margin-top:11px;line-height:1.9;}
+.gex{background:rgba(201,168,76,.07);border-right:3px solid var(--gold);padding:10px 14px;border-radius:0 9px 9px 0;margin-top:9px;font-family:'Amiri',serif;font-size:1.1rem;color:var(--gold-l);}
+/* ── QUIZ ── */
+.qsc{display:flex;gap:14px;justify-content:center;margin-bottom:18px;flex-wrap:wrap;}
+.qbox{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 20px;text-align:center;}
+.qnum{font-size:1.5rem;font-weight:800;color:var(--gold-l);}
+.qlbl{font-size:.74rem;color:var(--dim);}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px;text-align:center;margin-bottom:18px;}
+.qbig{font-family:'Amiri',serif;font-size:4.2rem;color:var(--gold-l);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes popIn{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+.qsub{color:var(--dim);margin:9px 0 22px;font-size:.92rem;}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:11px;max-width:470px;margin:0 auto;}
+.qopt{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);color:var(--text);padding:12px;border-radius:13px;font-family:'Tajawal',sans-serif;font-size:.92rem;cursor:pointer;transition:all .2s;}
+.qopt:hover{background:rgba(201,168,76,.12);border-color:var(--gold);}
+.qopt.ok{background:rgba(0,201,107,.18);border-color:#00c96b;color:#00c96b;}
+.qopt.no{background:rgba(255,107,157,.18);border-color:var(--rose);color:var(--rose);}
+/* ── STORIES ── */
+.scard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:13px;cursor:pointer;transition:all .3s;}
+.scard:hover{border-color:var(--gold);transform:translateY(-3px);}
+.stit{font-family:'Amiri',serif;font-size:1.28rem;color:var(--gold-l);margin:9px 0 6px;}
+.sprev{font-size:.86rem;color:var(--dim);line-height:1.7;}
+.srdr{display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:13px;}
+.srdr.op{display:block;animation:fuP .4s ease;}
+.stxt{font-family:'Amiri',serif;font-size:1.18rem;line-height:2.3;color:var(--text);}
+.hw{background:rgba(201,168,76,.18);border-radius:4px;padding:0 4px;cursor:pointer;border-bottom:1px dashed var(--gold);}
+.bbtn{background:transparent;border:1px solid var(--border);color:var(--dim);padding:7px 17px;border-radius:50px;font-family:'Tajawal',sans-serif;cursor:pointer;margin-bottom:14px;transition:all .2s;}
+.bbtn:hover{border-color:var(--gold);color:var(--gold-l);}
+/* ── SPELL ── */
+#spTxt{width:100%;min-height:110px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:15px 17px;border-radius:15px;font-family:'Amiri',serif;font-size:1.18rem;line-height:2;outline:none;resize:vertical;direction:rtl;transition:border-color .3s;}
+#spTxt:focus{border-color:var(--gold);}
+.serr{background:rgba(255,107,157,.13);border:1px solid rgba(255,107,157,.35);border-radius:9px;padding:11px 15px;margin-bottom:7px;display:flex;align-items:flex-start;gap:9px;}
+.ssugg{background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.28);border-radius:9px;padding:11px 15px;margin-bottom:7px;}
+.sclean{background:rgba(0,201,107,.1);border:1px solid rgba(0,201,107,.28);border-radius:11px;padding:13px 17px;text-align:center;color:#00c96b;font-weight:700;}
+/* ── NUMBERS ── */
+.numgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:11px;margin-bottom:18px;}
+.ncard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:all .3s;}
+.ncard:hover{border-color:var(--gold);transform:scale(1.05);}
+.narab{font-family:'Amiri',serif;font-size:2.2rem;color:var(--gold-l);}
+.nwest{font-size:.85rem;color:var(--dim);margin-top:3px;}
+.nname{font-size:.78rem;color:var(--teal);margin-top:2px;}
+/* ── DAYS/MONTHS ── */
+.dmgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:11px;margin-bottom:18px;}
+.dmcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:10px;}
+.dmcard:hover{border-color:var(--gold);transform:translateY(-2px);}
+.dmnum{font-size:1.5rem;}
+.dmar{font-family:'Amiri',serif;font-size:1.1rem;color:var(--gold-l);}
+.dmen{font-size:.75rem;color:var(--dim);}
+/* ── COLORS ── */
+.clrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:11px;margin-bottom:18px;}
+.clrcard{border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:all .3s;border:1px solid transparent;}
+.clrcard:hover{transform:scale(1.06);border-color:white;}
+/* ── SENTENCES ── */
+.sncard{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:17px;margin-bottom:11px;cursor:pointer;transition:all .3s;}
+.sncard:hover{border-color:var(--gold);}
+.snar{font-family:'Amiri',serif;font-size:1.2rem;color:var(--gold-l);margin-bottom:5px;}
+.snen{font-size:.85rem;color:var(--dim);}
+.sntip{font-size:.76rem;color:var(--teal);margin-top:5px;}
+/* ── DIACRITICS ── */
+.diacard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:17px;margin-bottom:11px;}
+.diamark{font-family:'Amiri',serif;font-size:2.5rem;color:var(--gold-l);display:block;margin:8px 0;}
+/* ── CONTROL PANEL ── */
+#cpanel{position:fixed;top:0;left:0;bottom:0;width:310px;background:rgba(13,5,24,.97);backdrop-filter:blur(20px);border-left:1px solid var(--border);z-index:500;transform:translateX(-100%);transition:transform .4s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:22px;direction:rtl;}
+[data-theme=light] #cpanel{background:rgba(245,240,232,.97);}
+#cpanel.op{transform:translateX(0);}
+#cpOvl{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:499;display:none;}
+#cpOvl.sh{display:block;}
+.cpT{font-family:'Amiri',serif;font-size:1.35rem;color:var(--gold-l);margin-bottom:20px;display:flex;align-items:center;gap:7px;}
+.cpSec{margin-bottom:20px;}
+.cpLbl{font-size:.8rem;color:var(--dim);margin-bottom:9px;font-weight:600;letter-spacing:.4px;}
+.cpRow{display:flex;gap:7px;flex-wrap:wrap;}
+.cpBtn{padding:7px 13px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.cpBtn:hover,.cpBtn.s{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold-l);}
+.cpRng{-webkit-appearance:none;width:100%;height:5px;background:rgba(255,255,255,.1);border-radius:10px;outline:none;margin-top:7px;cursor:pointer;}
+.cpRng::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 7px rgba(201,168,76,.5);}
+.cc{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s;}
+.cc:hover,.cc.s{border-color:white;transform:scale(1.15);}
+.cpClose{width:100%;padding:10px;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--gold-d));color:white;border:none;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:9px;transition:all .3s;}
+.cpClose:hover{transform:translateY(-2px);}
+/* ── SECURITY MODAL ── */
+#secMod{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);}
+#secMod.op{display:flex;}
+.secBox{background:var(--deep2);border:1px solid rgba(0,201,107,.3);border-radius:22px;padding:30px;max-width:390px;width:90%;text-align:center;animation:popIn .4s ease;}
+.secBox h2{font-family:'Amiri',serif;font-size:1.45rem;color:#00c96b;margin-bottom:13px;}
+.secRow{display:flex;align-items:center;justify-content:space-between;background:rgba(0,201,107,.06);border:1px solid rgba(0,201,107,.14);border-radius:11px;padding:11px 15px;margin-bottom:9px;font-size:.86rem;}
+.secOk{color:#00c96b;font-weight:700;}
+/* ── TOAST ── */
+#tip{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(40px);background:linear-gradient(135deg,var(--gold),var(--gold-d));color:white;padding:10px 24px;border-radius:50px;font-weight:700;font-size:.92rem;opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.175,.885,.32,1.275);z-index:1000;white-space:nowrap;box-shadow:0 8px 22px rgba(201,168,76,.4);}
+#tip.sh{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ── BUTTONS ── */
+.btn{padding:10px 24px;border-radius:50px;border:none;font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .3s;}
+.bg{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:white;box-shadow:0 4px 14px rgba(201,168,76,.3);}
+.bg:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(201,168,76,.4);}
+.bo{background:transparent;border:2px solid var(--border);color:var(--dim);}
+.bo:hover{border-color:var(--gold);color:var(--gold-l);}
+/* ── SINPUT ── */
+.sinp{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 17px;border-radius:50px;font-family:'Tajawal',sans-serif;font-size:.95rem;outline:none;transition:border-color .3s;}
+.sinp:focus{border-color:var(--gold);}
+.sinp::placeholder{color:var(--dim);}
+/* ── FILTER BTNS ── */
+.fbtn{padding:6px 15px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.fbtn:hover,.fbtn.on{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold-l);}
+/* ── PHRASE BOX ── */
+.phbox{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(0,201,167,.05));border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:all .3s;}
+.phbox:hover{border-color:var(--gold);transform:translateX(-3px);}
+.phar{font-family:'Amiri',serif;font-size:1.2rem;color:var(--gold-l);margin-bottom:4px;}
+.phen{font-size:.83rem;color:var(--dim);}
+.phtip{font-size:.75rem;color:var(--teal);margin-top:4px;}
+/* ── RESPONSIVE ── */
+@media(max-width:600px){.qopts{grid-template-columns:1fr;}.lgrid{grid-template-columns:1fr;}.wlc{flex-direction:column;}#cpanel{width:100%;}.clkT{font-size:1.05rem;}.clk{min-width:95px;}}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--gold-d);border-radius:10px;}
+::selection{background:rgba(201,168,76,.3);}
+</style>
+<!-- ResponsiveVoice: تعمل على كل الأجهزة بدون إعداد -->
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
+</head>
+<style>
+/* ═══════════════════════════════════════════
+   OFFICIAL SCHOOL HEADER — ترويسة رسمية
+   ═══════════════════════════════════════════ */
+
+/* Override original header style */
+header { display: none !important; }
+
+#offHdr {
+  position: relative;
+  z-index: 50;
+  direction: rtl;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* Flag strip */
+.oh-flag {
+  display: flex;
+  height: 10px;
+}
+.oh-flag.top { border-radius: 0; }
+.oh-flag .f-blk { flex: 1; background: #111; }
+.oh-flag .f-wht { flex: 1; background: #f0f0f0; }
+.oh-flag .f-grn { flex: 1; background: #007a3d; }
+.oh-flag .f-red-tri {
+  flex: 0 0 30px;
+  background: #ce1126;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.oh-flag.btm .f-red-tri {
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  order: -1;
+}
+
+/* Glass card */
+.oh-card {
+  background: linear-gradient(160deg,
+    rgba(255,255,255,0.075) 0%,
+    rgba(10,25,65,0.6) 45%,
+    rgba(4,12,35,0.82) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-left: 1.5px solid rgba(201,168,76,0.32);
+  border-right: 1.5px solid rgba(201,168,76,0.32);
+  border-bottom: 1.5px solid rgba(201,168,76,0.32);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.1) inset;
+}
+
+/* top gold shimmer line */
+.oh-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201,168,76,0.55) 20%,
+    rgba(240,208,128,1) 50%,
+    rgba(201,168,76,0.55) 80%,
+    transparent 100%);
+}
+
+.oh-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 28px;
+  flex-wrap: wrap;
+}
+
+/* ── Eagle ── */
+.oh-eagle {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.oh-eagle-glow {
+  position: absolute;
+  width: 170px; height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(201,168,76,0.30) 0%,
+    rgba(201,168,76,0.08) 55%,
+    transparent 75%);
+  animation: eagPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes eagPulse {
+  0%,100% { transform: scale(1); opacity: 0.8; }
+  50%      { transform: scale(1.1); opacity: 1; }
+}
+.oh-eagle img {
+  width: 145px;
+  height: 145px;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+  filter:
+    drop-shadow(0 0 14px rgba(201,168,76,0.75))
+    drop-shadow(0 0 32px rgba(201,168,76,0.35))
+    drop-shadow(0 5px 20px rgba(0,0,0,0.7));
+  animation: eagFloat 4.5s ease-in-out infinite;
+}
+@keyframes eagFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ── Center text ── */
+.oh-center {
+  flex: 1;
+  text-align: center;
+  min-width: 220px;
+}
+.oh-bismillah {
+  font-family: 'Amiri', serif;
+  font-size: 1.05rem;
+  color: rgba(240,208,128,0.75);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+.oh-ministry {
+  font-family: 'Amiri', serif;
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: #f0d080;
+  text-shadow: 0 0 18px rgba(240,208,128,0.55);
+  line-height: 1.55;
+}
+.oh-directorate {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #c8a85a;
+  margin-top: 2px;
+}
+.oh-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px auto;
+  max-width: 360px;
+}
+.oh-divider .ln {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+}
+.oh-divider .dm {
+  width: 7px; height: 7px;
+  background: #f0d080;
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgba(201,168,76,0.8);
+  flex-shrink: 0;
+}
+.oh-school {
+  font-family: 'Amiri', serif;
+  font-size: 1.52rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 0 22px rgba(201,168,76,0.65), 0 2px 8px rgba(0,0,0,0.7);
+  letter-spacing: 0.03em;
+  margin: 4px 0;
+}
+.oh-staff {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.oh-staff-item {
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 9px;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  color: #c8a870;
+  line-height: 1.5;
+  text-align: center;
+}
+.oh-staff-item .role { font-size: 0.72rem; color: #907848; display: block; }
+.oh-staff-item .name { color: #e8cc80; font-weight: 700; }
+
+/* ── Clock ── */
+.oh-clock {
+  flex-shrink: 0;
+  background: rgba(201,168,76,0.09);
+  border: 1.5px solid rgba(201,168,76,0.32);
+  border-radius: 14px;
+  padding: 12px 18px;
+  text-align: center;
+  min-width: 128px;
+  box-shadow: 0 0 18px rgba(201,168,76,0.1), 0 4px 14px rgba(0,0,0,0.4);
+}
+.oh-clock-time {
+  font-family: 'Tajawal', monospace;
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #f0d080;
+  letter-spacing: 3px;
+  direction: ltr;
+  text-shadow: 0 0 12px rgba(240,208,128,0.7);
+}
+.oh-clock-datm { font-size: 0.72rem; color: #907848; margin-top: 3px; font-weight: 600; }
+.oh-clock-dath { font-size: 0.68rem; color: #c9a84c; margin-top: 2px; font-family: 'Amiri', serif; }
+
+/* ── Corner ornaments ── */
+.oh-corner {
+  position: absolute;
+  width: 48px; height: 48px;
+  pointer-events: none;
+}
+.oh-corner.tl { top: 12px; right: 12px; }
+.oh-corner.tr { top: 12px; left: 12px; }
+.oh-corner.bl { bottom: 12px; right: 12px; }
+.oh-corner.br { bottom: 12px; left: 12px; }
+
+/* ── Controls row (from old header) ── */
+.oh-controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+@media (max-width: 640px) {
+  .oh-body { flex-direction: column; align-items: center; padding: 16px 14px; }
+  .oh-eagle img { width: 110px; height: 110px; }
+  .oh-school { font-size: 1.18rem; }
+  .oh-ministry { font-size: 1rem; }
+  .oh-controls { position: relative; top: auto; left: auto; justify-content: center; }
+}
+</style>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
+</head>
+<body>
+<canvas id="pCvs"></canvas>
+
+<!-- SECURITY BADGE -->
+<div id="secBadge" onclick="openSec()"><div class="sdot"></div>🔒 آمن ١٠٠٪</div>
+
+<!-- SPEAKER AVATAR -->
+<div id="spkAvatar" onclick="toggleSpk()">
+  <div class="avBody" id="avB">🎙️<div class="aw1"></div><div class="aw2"></div><div id="vStatus">🔊</div></div>
+  <div id="vBars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div>
+  <div class="avLbl">المعلم الصوتي</div>
+</div>
+
+<!-- CONTROL PANEL OVERLAY -->
+<div id="cpOvl" onclick="closeCP()"></div>
+<div id="cpanel">
+  <div class="cpT">⚙️ لوحة التحكم</div>
+  <div class="cpSec">
+    <div class="cpLbl">🎨 السمة</div>
+    <div class="cpRow">
+      <button class="cpBtn s" id="th0" onclick="setTheme('',this)">🌙 داكن</button>
+      <button class="cpBtn" id="th1" onclick="setTheme('light',this)">☀️ فاتح</button>
+      <button class="cpBtn" id="th2" onclick="setTheme('ocean',this)">🌊 محيط</button>
+      <button class="cpBtn" id="th3" onclick="setTheme('forest',this)">🌿 غابة</button>
+      <button class="cpBtn" id="th4" onclick="setTheme('rose',this)">🌸 وردي</button>
+    </div>
+  </div>
+  <div class="cpSec">
+    <div class="cpLbl">🔤 حجم الخط</div>
+    <input type="range" class="cpRng" min="13" max="22" value="16" oninput="setFS(this.value)" id="frng">
+    <div style="text-align:center;font-size:.78rem;color:var(--dim);margin-top:5px" id="fLbl">١٦ بكسل</div>
+  </div>
+  <div class="cpSec">
+    <div class="cpLbl">🌟 لون التمييز</div>
+    <div class="cpRow" id="acRow">
+      <div class="cc s" style="background:#c9a84c" onclick="setAcc('#c9a84c','#f0d080','#8b5e1a',this)"></div>
+      <div class="cc" style="background:#00c9a7" onclick="setAcc('#00c9a7','#80ffe0','#007a65',this)"></div>
+      <div class="cc" style="background:#ff6b9d" onclick="setAcc('#ff6b9d','#ffb3d1','#c2185b',this)"></div>
+      <div class="cc" style="background:#4fc3f7" onclick="setAcc('#4fc3f7','#b3e5fc','#0277bd',this)"></div>
+      <div class="cc" style="background:#a8e063" onclick="setAcc('#a8e063','#d4f5a0','#558b2f',this)"></div>
+      <div class="cc" style="background:#ff9f43" onclick="setAcc('#ff9f43','#ffd08a','#e67e22',this)"></div>
+    </div>
+  </div>
+  <div class="cpSec">
+    <div class="cpLbl">🎵 الصوت</div>
+    <div class="cpRow">
+      <button class="cpBtn s" id="vOn" onclick="setVoice(true,this)">🔊 مفعّل</button>
+      <button class="cpBtn" id="vOff" onclick="setVoice(false,this)">🔇 موقوف</button>
+    </div>
+    <div style="margin-top:10px">
+      <div class="cpLbl">سرعة النطق</div>
+      <input type="range" class="cpRng" min="0.4" max="1.8" step="0.1" value="0.85" oninput="setRate(this.value)" id="rrng">
+      <div style="text-align:center;font-size:.78rem;color:var(--dim);margin-top:4px" id="rLbl">٠.٨٥×</div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="cpLbl">درجة الصوت</div>
+      <input type="range" class="cpRng" min="0.5" max="2" step="0.1" value="1.1" oninput="setPitch(this.value)" id="prng">
+      <div style="text-align:center;font-size:.78rem;color:var(--dim);margin-top:4px" id="pLbl">١.١×</div>
+    </div>
+  </div>
+  <div class="cpSec">
+    <div class="cpLbl">✨ المؤثرات البصرية</div>
+    <div class="cpRow">
+      <button class="cpBtn s" id="fxOn" onclick="setFX(true,this)">✅ مفعلة</button>
+      <button class="cpBtn" id="fxOff" onclick="setFX(false,this)">❌ موقوفة</button>
+    </div>
+  </div>
+  <div class="cpSec">
+    <div class="cpLbl">📐 تخطيط المفردات</div>
+    <div class="cpRow">
+      <button class="cpBtn s" onclick="setLyt('grid',this)">▦ شبكة</button>
+      <button class="cpBtn" onclick="setLyt('list',this)">☰ قائمة</button>
+    </div>
+  </div>
+  <div class="cpSec">
+    <div class="cpLbl">🔔 الإشعارات الصوتية</div>
+    <div class="cpRow">
+      <button class="cpBtn s" id="ntOn" onclick="setNt(true,this)">✅ مفعلة</button>
+      <button class="cpBtn" id="ntOff" onclick="setNt(false,this)">❌ موقوفة</button>
+    </div>
+  </div>
+  <button class="cpClose" onclick="closeCP()">✓ تطبيق وإغلاق</button>
+  <div style="text-align:center;margin-top:13px;font-size:.7rem;color:var(--dim)">
+    تصميم وإعداد: أ. خليل محمد خليل عطيلة<br>
+    <span style="color:var(--gold);font-size:.66rem">نسخة ٣.٠ برو — ١٤٤٦هـ</span>
+  </div>
+</div>
+
+<!-- SECURITY MODAL -->
+<div id="secMod">
+  <div class="secBox">
+    <div style="font-size:3rem;margin-bottom:9px">🛡️</div>
+    <h2>الأمان والخصوصية</h2>
+    <div class="secRow"><span>🔒 تشفير البيانات</span><span class="secOk">✓ SSL/TLS 256bit</span></div>
+    <div class="secRow"><span>🚫 لا تتبع خارجي</span><span class="secOk">✓ محمي</span></div>
+    <div class="secRow"><span>📵 لا إعلانات</span><span class="secOk">✓ نظيف ١٠٠٪</span></div>
+    <div class="secRow"><span>💾 البيانات محلية</span><span class="secOk">✓ خاص</span></div>
+    <div class="secRow"><span>👁️ الخصوصية</span><span class="secOk">✓ مصون</span></div>
+    <div class="secRow"><span>🔐 المصادقة</span><span class="secOk">✓ آمنة</span></div>
+    <div class="secRow"><span>🌐 الاتصال</span><span class="secOk">✓ مشفّر</span></div>
+    <button class="btn bg" style="margin-top:14px;width:100%" onclick="closeSec()">حسناً ✓</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- OFFICIAL HEADER — ترويسة رسمية             -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="offHdr">
+  <!-- TOP FLAG STRIP -->
+  <div class="oh-flag top">
+    <div class="f-red-tri"></div>
+    <div class="f-blk"></div>
+    <div class="f-wht"></div>
+    <div class="f-grn"></div>
+  </div>
+
+  <!-- GLASS CARD -->
+  <div class="oh-card">
+
+    <!-- Corner ornaments -->
+    <div class="oh-corner tl">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M48 2 L2 2 L2 48" stroke="#c9a84c" stroke-width="1.8" fill="none" opacity="0.7"/>
+        <circle cx="2" cy="2" r="3" fill="#f0d080"/>
+        <circle cx="25" cy="2" r="1.5" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="2" cy="25" r="1.5" fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="oh-corner tr">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 2 L46 2 L46 48" stroke="#c9a84c" stroke-width="1.8" fill="none" opacity="0.7"/>
+        <circle cx="46" cy="2" r="3" fill="#f0d080"/>
+        <circle cx="23" cy="2" r="1.5" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="46" cy="25" r="1.5" fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="oh-corner bl">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M48 46 L2 46 L2 0" stroke="#c9a84c" stroke-width="1.8" fill="none" opacity="0.7"/>
+        <circle cx="2" cy="46" r="3" fill="#f0d080"/>
+        <circle cx="25" cy="46" r="1.5" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="2" cy="23" r="1.5" fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="oh-corner br">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 46 L46 46 L46 0" stroke="#c9a84c" stroke-width="1.8" fill="none" opacity="0.7"/>
+        <circle cx="46" cy="46" r="3" fill="#f0d080"/>
+        <circle cx="23" cy="46" r="1.5" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="46" cy="23" r="1.5" fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- App controls (top-left) -->
+    <div class="oh-controls">
+      <div class="ibtn" onclick="openCP()" title="لوحة التحكم">⚙️</div>
+      <div class="ibtn" onclick="showSec('spell',document.querySelectorAll('.tab')[7])" title="تدقيق">🔍</div>
+      <div class="ibtn" onclick="openSec()" title="الأمان">🔒</div>
+      <div class="ibtn" onclick="spk('مرحباً بك في مدرسة ذكور بيت عوا الثانوية')" title="صوت">🔊</div>
+    </div>
+
+    <div class="oh-body">
+
+      <!-- EAGLE — Right -->
+      <div class="oh-eagle">
+        <div class="oh-eagle-glow"></div>
+        <img src="data:image/png;base64,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" alt="نسر فلسطين" />
+      </div>
+
+      <!-- CENTER TEXT -->
+      <div class="oh-center">
+        <div class="oh-bismillah">بسم الله الرحمن الرحيم</div>
+
+        <div class="oh-divider">
+          <div class="ln"></div><div class="dm"></div><div class="ln"></div>
+        </div>
+
+        <div class="oh-ministry">وزارة التربية والتعليم العالي</div>
+        <div class="oh-directorate">مديرية التربية / جنوب الخليل</div>
+
+        <div class="oh-divider">
+          <div class="ln"></div>
+          <div class="dm"></div>
+          <div class="dm" style="opacity:0.45;transform:rotate(45deg) scale(0.55);margin:0 -3px"></div>
+          <div class="dm"></div>
+          <div class="ln"></div>
+        </div>
+
+        <div class="oh-school">مدرسة ذكور بيت عوا الثانوية</div>
+
+        <div class="oh-divider">
+          <div class="ln"></div><div class="dm"></div><div class="ln"></div>
+        </div>
+
+        <div class="oh-staff">
+          <div class="oh-staff-item">
+            <span class="role">إعداد وتصميم</span>
+            <span class="name">أ. خليل محمد خليل عطيلة</span>
+          </div>
+          <div class="oh-staff-item">
+            <span class="role">مدير المدرسة</span>
+            <span class="name">أ. مؤيد سويطي</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOCK — Left -->
+      <div class="oh-clock">
+        <div class="oh-clock-time" id="cT">--:--:--</div>
+        <div class="oh-clock-datm" id="cD">...</div>
+        <div class="oh-clock-dath" id="cH">...</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM FLAG STRIP -->
+  <div class="oh-flag btm">
+    <div class="f-red-tri"></div>
+    <div class="f-grn"></div>
+    <div class="f-wht"></div>
+    <div class="f-blk"></div>
+  </div>
+</div>
+<!-- END OFFICIAL HEADER -->
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab on" onclick="showSec('home',this)">🏠 الرئيسية</div>
+  <div class="tab" onclick="showSec('alpha',this)">أ ب ت الحروف</div>
+  <div class="tab" onclick="showSec('vocab',this)">📚 المفردات</div>
+  <div class="tab" onclick="showSec('grammar',this)">✍️ القواعد</div>
+  <div class="tab" onclick="showSec('nums',this)">🔢 الأعداد</div>
+  <div class="tab" onclick="showSec('phrases',this)">💬 جمل وعبارات</div>
+  <div class="tab" onclick="showSec('quiz',this)">🎯 اختبار</div>
+  <div class="tab" onclick="showSec('stories',this)">📖 قصص</div>
+  <div class="tab" onclick="showSec('spell',this)">🔍 تدقيق</div>
+</div>
+
+<main>
+
+<!-- ══════════ HOME ══════════ -->
+<div class="sec on" id="s-home">
+  <div class="wlc">
+    <div>
+      <h2>مرحباً وأهلاً وسهلاً 👋</h2>
+      <p>واصل رحلتك في تعلّم اللغة العربية الجميلة</p>
+      <div class="dsgn">✦ تصميم وإعداد: أ. خليل محمد خليل عطيلة ✦</div>
+    </div>
+    <svg width="78" height="78" viewBox="0 0 78 78">
+      <circle cx="39" cy="39" r="33" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+      <circle cx="39" cy="39" r="33" fill="none" stroke="var(--gold)" stroke-width="7" stroke-dasharray="207.3" stroke-dashoffset="52" stroke-linecap="round" transform="rotate(-90 39 39)"/>
+      <text x="39" y="44" text-anchor="middle" fill="var(--gold-l)" font-size="13" font-weight="bold" font-family="Tajawal">٧٥٪</text>
+    </svg>
+  </div>
+  <div class="srow">
+    <div class="sbox"><div class="snum">٢٤</div><div class="slbl">حرف مُتعلَّم</div></div>
+    <div class="sbox"><div class="snum">٦٠</div><div class="slbl">كلمة محفوظة</div></div>
+    <div class="sbox"><div class="snum">🔥٧</div><div class="slbl">أيام متتالية</div></div>
+    <div class="sbox"><div class="snum">٣٤٠</div><div class="slbl">نقطة XP</div></div>
+    <div class="sbox"><div class="snum">٩٢٪</div><div class="slbl">دقة الإجابات</div></div>
+    <div class="sbox"><div class="snum">١٢</div><div class="slbl">درس مكتمل</div></div>
+  </div>
+  <div class="st">المستويات</div>
+  <div class="lgrid">
+    <div class="lcard" style="--gl:rgba(0,201,167,.17)" onclick="showSec('alpha',document.querySelectorAll('.tab')[1])">
+      <div style="font-size:1.9rem;margin-bottom:7px">🌱</div>
+      <span class="ltag" style="background:rgba(0,201,167,.14);color:#00c9a7">مبتدئ</span>
+      <h3 style="margin:7px 0 4px;font-size:1.02rem">الحروف الأبجدية</h3>
+      <p style="font-size:.8rem;color:var(--dim)">الحروف الـ٢٨ مع النطق والأشكال</p>
+      <div class="lbar"><div class="lbf" style="width:85%;background:linear-gradient(90deg,#00c9a7,#007a65)"></div></div>
+      <div style="font-size:.73rem;color:var(--dim);margin-top:4px">٢٤/٢٨ حرف</div>
+    </div>
+    <div class="lcard" style="--gl:rgba(201,168,76,.17)" onclick="showSec('vocab',document.querySelectorAll('.tab')[2])">
+      <div style="font-size:1.9rem;margin-bottom:7px">📦</div>
+      <span class="ltag" style="background:rgba(201,168,76,.14);color:var(--gold)">متوسط</span>
+      <h3 style="margin:7px 0 4px;font-size:1.02rem">المفردات</h3>
+      <p style="font-size:.8rem;color:var(--dim)">كلمات يومية أساسية متنوعة</p>
+      <div class="lbar"><div class="lbf" style="width:60%;background:linear-gradient(90deg,var(--gold),var(--gold-d))"></div></div>
+      <div style="font-size:.73rem;color:var(--dim);margin-top:4px">٦٠/١٠٠ كلمة</div>
+    </div>
+    <div class="lcard" style="--gl:rgba(79,195,247,.17)" onclick="showSec('grammar',document.querySelectorAll('.tab')[3])">
+      <div style="font-size:1.9rem;margin-bottom:7px">⚙️</div>
+      <span class="ltag" style="background:rgba(79,195,247,.14);color:#4fc3f7">متوسط</span>
+      <h3 style="margin:7px 0 4px;font-size:1.02rem">القواعد النحوية</h3>
+      <p style="font-size:.8rem;color:var(--dim)">نحو وصرف وبلاغة</p>
+      <div class="lbar"><div class="lbf" style="width:40%;background:linear-gradient(90deg,#4fc3f7,#0277bd)"></div></div>
+      <div style="font-size:.73rem;color:var(--dim);margin-top:4px">٤/١٠ دروس</div>
+    </div>
+    <div class="lcard" style="--gl:rgba(168,224,99,.17)" onclick="showSec('nums',document.querySelectorAll('.tab')[4])">
+      <div style="font-size:1.9rem;margin-bottom:7px">🔢</div>
+      <span class="ltag" style="background:rgba(168,224,99,.14);color:#a8e063">مبتدئ</span>
+      <h3 style="margin:7px 0 4px;font-size:1.02rem">الأعداد والأرقام</h3>
+      <p style="font-size:.8rem;color:var(--dim)">من الصفر إلى المليون</p>
+      <div class="lbar"><div class="lbf" style="width:70%;background:linear-gradient(90deg,#a8e063,#558b2f)"></div></div>
+      <div style="font-size:.73rem;color:var(--dim);margin-top:4px">٧/١٠ دروس</div>
+    </div>
+    <div class="lcard" style="--gl:rgba(255,107,157,.17)" onclick="showSec('phrases',document.querySelectorAll('.tab')[5])">
+      <div style="font-size:1.9rem;margin-bottom:7px">💬</div>
+      <span class="ltag" style="background:rgba(255,107,157,.14);color:var(--rose)">متوسط</span>
+      <h3 style="margin:7px 0 4px;font-size:1.02rem">جمل وعبارات يومية</h3>
+      <p style="font-size:.8rem;color:var(--dim)">تواصل بثقة في الحياة اليومية</p>
+      <div class="lbar"><div class="lbf" style="width:50%;background:linear-gradient(90deg,var(--rose),#c2185b)"></div></div>
+      <div style="font-size:.73rem;color:var(--dim);margin-top:4px">٥/١٠ دروس</div>
+    </div>
+    <div class="lcard" style="--gl:rgba(79,195,247,.17)" onclick="showSec('stories',document.querySelectorAll('.tab')[7])">
+      <div style="font-size:1.9rem;margin-bottom:7px">📖</div>
+      <span class="ltag" style="background:rgba(255,107,157,.14);color:var(--rose)">متقدم</span>
+      <h3 style="margin:7px 0 4px;font-size:1.02rem">القصص والحكايات</h3>
+      <p style="font-size:.8rem;color:var(--dim)">حكايات تراثية وحديثة مشروحة</p>
+      <div class="lbar"><div class="lbf" style="width:25%;background:linear-gradient(90deg,var(--rose),#c2185b)"></div></div>
+      <div style="font-size:.73rem;color:var(--dim);margin-top:4px">٣/١٢ قصة</div>
+    </div>
+  </div>
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div><h3 style="margin-bottom:4px">ابدأ اختباراً سريعاً 🎯</h3><p style="color:var(--dim);font-size:.86rem">اختبر معلوماتك في الحروف والمفردات</p></div>
+    <button class="btn bg" onclick="showSec('quiz',document.querySelectorAll('.tab')[6])">ابدأ الآن</button>
+  </div>
+</div>
+
+<!-- ══════════ ALPHABET ══════════ -->
+<div class="sec" id="s-alpha">
+  <div class="st">الحروف الأبجدية — ٢٨ حرفاً</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn bg" onclick="spk('الحروف الأبجدية العربية هي: ألف باء تاء ثاء جيم حاء خاء دال ذال راء زاي سين شين صاد ضاد طاء ظاء عين غين فاء قاف كاف لام ميم نون هاء واو ياء')">🔊 استمع للجميع</button>
+    <button class="btn bo" onclick="resetAlpha()">🔄 إعادة التعلم</button>
+  </div>
+  <div class="agrid" id="aGrid"></div>
+  <div id="ldet">
+    <div class="lhero" id="dlH"></div>
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:5px" id="dlN"></div>
+    <div style="font-size:.84rem;color:var(--dim);margin-bottom:12px" id="dlTr"></div>
+    <div class="frow" id="dlF"></div>
+    <div style="color:var(--dim);font-size:.88rem;margin-bottom:14px" id="dlE"></div>
+    <div style="background:rgba(201,168,76,.07);border-radius:12px;padding:12px;margin-bottom:14px" id="dlW">
+      <div style="font-size:.8rem;color:var(--dim);margin-bottom:8px">📝 كلمات تبدأ بهذا الحرف:</div>
+      <div id="dlWList" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+      <button class="btn bg" onclick="spkLtr()">🔊 استمع للحرف</button>
+      <button class="btn bg" onclick="spkLtrEx()">🔊 استمع لأمثلة</button>
+      <button class="btn bg" onclick="markOk()">✓ حفظت</button>
+      <button class="btn bo" onclick="document.getElementById('ldet').style.display='none'">✕ إغلاق</button>
+    </div>
+  </div>
+  <!-- DIACRITICS -->
+  <div class="st" style="margin-top:24px">الحركات والتشكيل</div>
+  <div id="diaGrid"></div>
+</div>
+
+<!-- ══════════ VOCABULARY ══════════ -->
+<div class="sec" id="s-vocab">
+  <div class="st">المفردات الأساسية</div>
+  <div style="display:flex;gap:10px;margin-bottom:14px">
+    <input class="sinp" id="vSrch" type="text" placeholder="🔍 ابحث عن كلمة عربية أو إنجليزية..." oninput="filtV(this.value)">
+  </div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px" id="vFltrs"></div>
+  <div class="vgrid" id="vGrid"></div>
+</div>
+
+<!-- ══════════ GRAMMAR ══════════ -->
+<div class="sec" id="s-grammar">
+  <div class="st">قواعد النحو والصرف والبلاغة</div>
+  <div id="gList"></div>
+</div>
+
+<!-- ══════════ NUMBERS ══════════ -->
+<div class="sec" id="s-nums">
+  <div class="st">🔢 الأعداد العربية</div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn bg" onclick="spk('الأعداد من صفر إلى عشرة: صفر، واحد، اثنان، ثلاثة، أربعة، خمسة، ستة، سبعة، ثمانية، تسعة، عشرة')">🔊 استمع للأعداد</button>
+  </div>
+  <div class="st" style="font-size:1.1rem">الأعداد ٠–٢٠</div>
+  <div class="numgrid" id="numGrid"></div>
+  <div class="st" style="font-size:1.1rem">العشرات والمئات</div>
+  <div class="numgrid" id="numGrid2"></div>
+  <div class="st" style="font-size:1.1rem">الأعداد الترتيبية</div>
+  <div class="numgrid" id="numGrid3"></div>
+  <div class="st" style="font-size:1.1rem">الأيام والأشهر</div>
+  <div class="dmgrid" id="dayGrid"></div>
+  <div class="dmgrid" id="monGrid"></div>
+  <div class="st" style="font-size:1.1rem">الألوان</div>
+  <div class="clrgrid" id="clrGrid"></div>
+</div>
+
+<!-- ══════════ PHRASES ══════════ -->
+<div class="sec" id="s-phrases">
+  <div class="st">💬 جمل وعبارات يومية</div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px" id="phFltrs"></div>
+  <div id="phList"></div>
+</div>
+
+<!-- ══════════ QUIZ ══════════ -->
+<div class="sec" id="s-quiz">
+  <div class="qsc">
+    <div class="qbox"><div class="qnum" id="qC">0</div><div class="qlbl">✓ صحيح</div></div>
+    <div class="qbox"><div class="qnum" id="qW">0</div><div class="qlbl">✗ خطأ</div></div>
+    <div class="qbox"><div class="qnum" id="qT">0</div><div class="qlbl">المجموع</div></div>
+    <div class="qbox"><div class="qnum" id="qP">-</div><div class="qlbl">النسبة</div></div>
+  </div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;justify-content:center" id="qTypeFltrs"></div>
+  <div class="qcard">
+    <div class="qbig" id="qQ">؟</div>
+    <div class="qsub" id="qSub">ما اسم هذا الحرف؟</div>
+    <div class="qopts" id="qOpts"></div>
+  </div>
+  <div style="text-align:center;display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+    <button class="btn bo" onclick="nextQ()">التالي ←</button>
+    <button class="btn bg" onclick="spkCurQ()">🔊 استمع</button>
+    <button class="btn bo" onclick="resetQScore()">🔄 إعادة</button>
+  </div>
+</div>
+
+<!-- ══════════ STORIES ══════════ -->
+<div class="sec" id="s-stories">
+  <div class="st">📖 القصص والحكايات</div>
+  <div id="sList"></div>
+  <div id="sRdr" class="srdr"></div>
+</div>
+
+<!-- ══════════ SPELL CHECK ══════════ -->
+<div class="sec" id="s-spell">
+  <div class="st">🔍 التدقيق اللغوي العربي</div>
+  <div class="card" style="margin-bottom:16px">
+    <p style="color:var(--dim);font-size:.86rem;margin-bottom:11px">اكتب نصاً عربياً للتدقيق في الأخطاء الإملائية والنحوية الشائعة:</p>
+    <textarea id="spTxt" placeholder="اكتب نصك العربي هنا...&#10;مثال: انا ذهبت الى المدرسه بالامس وقرات كتابا جميلا"></textarea>
+    <div style="display:flex;gap:9px;margin-top:13px;flex-wrap:wrap">
+      <button class="btn bg" onclick="doSpell()">🔍 تدقيق الآن</button>
+      <button class="btn bo" onclick="clearSp()">🗑️ مسح</button>
+      <button class="btn bo" onclick="spkSp()">🔊 استمع للنص</button>
+      <button class="btn bo" onclick="copySpell()">📋 نسخ النص المُصحَّح</button>
+    </div>
+  </div>
+  <div id="spRes"></div>
+  <div class="card" style="margin-top:14px">
+    <div class="st" style="font-size:1.08rem">📌 أخطاء شائعة يجب تجنبها</div>
+    <div id="comErr"></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="st" style="font-size:1.08rem">💡 قواعد إملائية سريعة</div>
+    <div id="spRules"></div>
+  </div>
+</div>
+
+</main>
+<div id="tip"></div>
+
+<!-- SOUND ACTIVATION OVERLAY -->
+<div id="sndOverlay" style="position:fixed;inset:0;z-index:9999;background:rgba(10,5,25,0.92);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;direction:rtl;">
+  <div style="font-size:3.5rem;">🔊</div>
+  <div style="font-family:Amiri,serif;font-size:1.5rem;color:#f0d080;text-align:center;padding:0 20px;">تطبيق تعلم اللغة العربية</div>
+  <div style="font-size:0.88rem;color:#a89070;text-align:center;padding:0 30px;line-height:1.8;">اضغط على الزر لتفعيل الصوت والبدء</div>
+  <button onclick="activateSound()" style="margin-top:8px;padding:16px 48px;background:linear-gradient(135deg,#c9a84c,#8b5e1a);color:white;border:none;border-radius:50px;font-family:Tajawal,sans-serif;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:0 0 30px rgba(201,168,76,0.5);">▶ ابدأ مع الصوت</button>
+  <button onclick="document.getElementById('sndOverlay').style.display='none'" style="background:transparent;border:1px solid rgba(201,168,76,0.3);color:#a89070;padding:10px 30px;border-radius:50px;font-family:Tajawal,sans-serif;font-size:0.88rem;cursor:pointer;">بدون صوت</button>
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════
+//  محرك الصوت المتعدد المصادر
+//  Infinix Smart 9 / Android / iOS / Chrome / Firefox
+//  5 طرق للنطق — واحدة منها ستنجح!
+// ═══════════════════════════════════════════════
+'use strict';
+
+var voiceOn    = true;
+var speechRate = 0.85;
+var speechPitch= 1.1;
+var notifOn    = true;
+var curQ       = null;
+var fxOn       = true;
+var audioCtx   = null;
+var voices     = [];
+var arVoice    = null;
+var _au        = null;
+var _busy      = false;
+var _tried     = {};   // {url: true} للـ URLs التي جُرِّبت
+
+// ══════════════════════════════════════════════
+//  AudioContext — للنغمات فقط
+// ══════════════════════════════════════════════
+function getACtx(){
+  try{
+    if(!audioCtx){
+      var AC=window.AudioContext||window.webkitAudioContext;
+      if(AC) audioCtx=new AC();
+    }
+    if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
+  }catch(e){}
+  return audioCtx;
+}
+function beep(freq,dur,vol,type){
+  freq=freq||440;dur=dur||0.15;vol=vol||0.2;type=type||'sine';
+  try{
+    var c=getACtx();if(!c)return;
+    var o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.frequency.value=freq;o.type=type;
+    g.gain.setValueAtTime(vol,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+    o.start(c.currentTime);o.stop(c.currentTime+dur);
+  }catch(e){}
+}
+function correctBeep(){ beep(880,0.1,0.2,'sine'); setTimeout(function(){beep(1100,0.1,0.18,'sine');},130); }
+function wrongBeep()  { beep(200,0.28,0.22,'sawtooth'); }
+function successBeep(){ [523,659,784,1047].forEach(function(f,i){setTimeout(function(){beep(f,0.13,0.2);},i*110);}); }
+function clickBeep()  { beep(660,0.05,0.07,'sine'); }
+function notifBeep()  { beep(520,0.12,0.14,'sine'); }
+
+// ══════════════════════════════════════════════
+//  تحميل أصوات Web Speech
+// ══════════════════════════════════════════════
+function loadVoices(){
+  if(!window.speechSynthesis) return;
+  try{
+    var vv=window.speechSynthesis.getVoices();
+    if(!vv||!vv.length) return;
+    voices=vv; arVoice=null;
+    var prefer=['ar-SA','ar-EG','ar-JO','ar-MA','ar'];
+    for(var p=0;p<prefer.length&&!arVoice;p++)
+      for(var i=0;i<vv.length;i++)
+        if(vv[i].lang===prefer[p]||vv[i].lang.indexOf(prefer[p])===0){arVoice=vv[i];break;}
+  }catch(e){}
+}
+if(window.speechSynthesis){
+  loadVoices();
+  if(window.speechSynthesis.onvoiceschanged!==undefined)
+    window.speechSynthesis.onvoiceschanged=loadVoices;
+  [300,700,1500,3000,6000].forEach(function(t){setTimeout(loadVoices,t);});
+}
+
+// ══════════════════════════════════════════════
+//  قائمة مصادر الصوت — 5 مصادر بديلة
+// ══════════════════════════════════════════════
+function getUrls(txt){
+  var q=encodeURIComponent(txt);
+  return [
+    // 1. Google Translate TTS — الأسرع والأوضح
+    'https://translate.google.com/translate_tts?ie=UTF-8&tl=ar&client=tw-ob&q='+q,
+    // 2. Google Translate بمعامل مختلف
+    'https://translate.googleapis.com/translate_tts?ie=UTF-8&tl=ar&client=gtx&q='+q,
+    // 3. VoiceRSS — خدمة TTS مجانية
+    'https://api.voicerss.org/?key=demo&hl=ar-sa&r=0&c=mp3&f=16khz_16bit_mono&src='+q,
+    // 4. TTS Demo — خدمة أخرى
+    'https://ttsmp3.com/makemp3_new.php',
+  ];
+}
+
+// ══════════════════════════════════════════════
+//  الدالة الرئيسية — محرك صوت متعدد المصادر
+// ══════════════════════════════════════════════
+function spk(txt){
+  if(!voiceOn||!txt||!txt.trim()) return;
+  txt = txt.trim();
+  stopAudio();
+  startSpkAnim();
+
+  // ══ أولاً: Web Speech API (يعمل محلياً بدون إنترنت) ══
+  if(window.speechSynthesis){
+    try{
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'ar-SA';
+      u.rate = speechRate;
+      u.pitch = speechPitch;
+      u.volume = 1;
+
+      // اختيار أفضل صوت عربي متاح
+      var vv = window.speechSynthesis.getVoices();
+      var best = null;
+      var arLangs = ['ar-SA','ar-EG','ar-JO','ar-MA','ar-AE','ar'];
+      for(var p=0;p<arLangs.length&&!best;p++)
+        for(var i=0;i<vv.length;i++)
+          if(vv[i].lang===arLangs[p]||vv[i].lang.indexOf(arLangs[p])===0){best=vv[i];break;}
+      if(best){ u.voice=best; u.lang=best.lang; }
+
+      var done=false;
+      u.onstart=function(){ startSpkAnim(); };
+      u.onend=function(){ if(!done){done=true;stopSpkAnim();} };
+      u.onerror=function(ev){
+        if(done) return; done=true; stopSpkAnim();
+        if(ev.error==='not-allowed'||ev.error==='audio-busy'){
+          // جرب ResponsiveVoice
+          tryRV(txt);
+        }
+      };
+
+      // timeout — إذا لم يبدأ بعد 2.5 ثانية جرب ResponsiveVoice
+      var to=setTimeout(function(){
+        if(!done){ done=true; stopSpkAnim(); tryRV(txt); }
+      },2500);
+      u.onstart=function(){ startSpkAnim(); clearTimeout(to); };
+
+      window.speechSynthesis.speak(u);
+      return;
+    }catch(e){}
+  }
+
+  // ══ ثانياً: ResponsiveVoice ══
+  tryRV(txt);
+}
+
+function tryRV(txt){
+  if(window.responsiveVoice){
+    try{
+      responsiveVoice.speak(txt,'Arabic Male',{
+        rate:speechRate, pitch:speechPitch, volume:1,
+        onstart:startSpkAnim,
+        onend:stopSpkAnim,
+        onerror:function(){ stopSpkAnim(); tryAllMP3(txt); }
+      });
+      return;
+    }catch(e){}
+  }
+  tryAllMP3(txt);
+}
+
+// ══════════════════════════════════════════════
+//  طريقة 1: Web Speech API
+// ══════════════════════════════════════════════
+function tryWebSpeech(txt, cb){
+  if(!window.speechSynthesis){ cb(false); return; }
+  try{
+    window.speechSynthesis.cancel();
+    setTimeout(function(){
+      try{
+        var u=new SpeechSynthesisUtterance(txt);
+        u.lang=arVoice?arVoice.lang:'ar';
+        if(arVoice) u.voice=arVoice;
+        u.rate=speechRate; u.pitch=speechPitch; u.volume=1;
+
+        var done=false, started=false;
+        // إذا لم يبدأ خلال 2 ثانية → فشل
+        var startTO=setTimeout(function(){
+          if(!started&&!done){ done=true; stopSpkAnim(); cb(false); }
+        },2000);
+        // إذا لم ينته خلال وقت معقول → فشل
+        var endTO=setTimeout(function(){
+          if(!done){ done=true; stopSpkAnim(); cb(false); }
+        },Math.max(5000,txt.length*90));
+
+        u.onstart=function(){
+          started=true; clearTimeout(startTO);
+          // منع توقف Android بعد 15 ثانية
+          var rv=setInterval(function(){
+            if(!window.speechSynthesis.speaking){clearInterval(rv);return;}
+            if(window.speechSynthesis.paused) window.speechSynthesis.resume();
+          },200);
+        };
+        u.onend=function(){
+          if(!done){done=true;clearTimeout(endTO);stopSpkAnim();cb(true);}
+        };
+        u.onerror=function(ev){
+          clearTimeout(startTO);clearTimeout(endTO);
+          if(!done){
+            done=true; stopSpkAnim();
+            if(ev.error==='not-allowed'||ev.error==='audio-busy') cb(false);
+            else if(ev.error==='interrupted'||ev.error==='canceled') cb(true);
+            else cb(false);
+          }
+        };
+        window.speechSynthesis.speak(u);
+      }catch(e){ stopSpkAnim(); cb(false); }
+    },80);
+  }catch(e){ cb(false); }
+}
+
+// ══════════════════════════════════════════════
+//  طريقة 2–4: تشغيل MP3 من مصادر متعددة
+// ══════════════════════════════════════════════
+function tryAllMP3(txt){
+  var urls=getUrls(txt);
+  tryNextMP3(txt, urls, 0);
+}
+
+function tryNextMP3(txt, urls, idx){
+  if(idx>=urls.length){
+    // كل المصادر فشلت → عرض مرئي
+    stopSpkAnim();
+    showReadBox(txt);
+    return;
+  }
+  tryOneMP3(urls[idx], function(ok){
+    if(!ok) tryNextMP3(txt, urls, idx+1);
+  });
+}
+
+function tryOneMP3(url, cb){
+  try{
+    if(_au){ try{_au.pause();_au.src='';}catch(e){} _au=null; }
+    var a=new (window.Audio||HTMLAudioElement)();
+    _au=a;
+    a.volume=1.0;
+    var settled=false;
+
+    // timeout — إذا لم يبدأ التحميل خلال 4 ثواني
+    var to=setTimeout(function(){
+      if(!settled){settled=true;a.src='';cb(false);}
+    },4000);
+
+    a.oncanplaythrough=function(){
+      clearTimeout(to);
+      a.play().then(function(){
+        // يعزف — ننتظر النهاية
+      }).catch(function(e){
+        // Autoplay مرفوض — نعرض زر تشغيل يدوي
+        if(!settled){
+          settled=true;
+          stopSpkAnim();
+          showManualPlay(a, url);
+          cb(true); // نعتبره "نجح" حتى لا ننتقل لمصدر آخر
+        }
+      });
+    };
+    a.onended=function(){
+      if(!settled){settled=true;stopSpkAnim();cb(true);}
+    };
+    a.onerror=function(){
+      clearTimeout(to);
+      if(!settled){settled=true;stopSpkAnim();cb(false);}
+    };
+    a.onabort=function(){
+      clearTimeout(to);
+      if(!settled){settled=true;stopSpkAnim();cb(false);}
+    };
+
+    a.src=url;
+    a.load();
+  }catch(e){ cb(false); }
+}
+
+// ══════════════════════════════════════════════
+//  عناصر الواجهة المساعدة
+// ══════════════════════════════════════════════
+
+// زر تشغيل يدوي عند منع Autoplay
+function showManualPlay(audioEl, url){
+  var old=document.getElementById('_mpBtn'); if(old) old.remove();
+  var d=document.createElement('div');
+  d.id='_mpBtn';
+  d.style.cssText=[
+    'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);',
+    'z-index:9999;background:linear-gradient(135deg,#c9a84c,#8b5e1a);',
+    'border-radius:50px;padding:13px 30px;color:#fff;',
+    'font-family:Tajawal,sans-serif;font-weight:700;font-size:1.05rem;',
+    'cursor:pointer;box-shadow:0 4px 22px rgba(201,168,76,.6);',
+    'direction:rtl;animation:popIn .3s ease;white-space:nowrap;'
+  ].join('');
+  d.textContent='🔊 اضغط هنا لتشغيل الصوت';
+  d.addEventListener('click',function(){
+    d.remove();
+    getACtx(); // فتح AudioContext
+    if(audioEl){
+      audioEl.play().catch(function(){
+        // جرب رابط مباشر
+        window.open(url,'_blank');
+      });
+    }
+    startSpkAnim();
+  });
+  document.body.appendChild(d);
+  setTimeout(function(){var b=document.getElementById('_mpBtn');if(b)b.remove();},12000);
+}
+
+// عرض النص للقراءة
+function showReadBox(txt){
+  var old=document.getElementById('_rdBox'); if(old) old.remove();
+  var d=document.createElement('div');
+  d.id='_rdBox';
+  d.style.cssText=[
+    'position:fixed;bottom:85px;left:50%;transform:translateX(-50%);',
+    'max-width:340px;width:93%;',
+    'background:linear-gradient(135deg,#1a0a2e,#2d1b4e);',
+    'border:2px solid #c9a84c;border-radius:16px;',
+    'padding:16px 18px;z-index:9999;direction:rtl;',
+    'box-shadow:0 8px 32px rgba(0,0,0,.65);',
+    'animation:popIn .3s ease;'
+  ].join('');
+  d.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+   +'  <span style="font-size:.72rem;color:#c9a84c;font-weight:700;">📖 النص للقراءة</span>'
+   +'  <button id="_rdClose" style="background:transparent;border:1px solid rgba(201,168,76,.4);color:#c9a84c;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:.75rem;line-height:1;">✕</button>'
+   +'</div>'
+   +'<div style="font-family:Amiri,serif;font-size:1.12rem;color:#f0e6d3;line-height:1.9;">'+txt+'</div>';
+  document.body.appendChild(d);
+  document.getElementById('_rdClose').addEventListener('click',function(){d.remove();});
+  setTimeout(function(){var b=document.getElementById('_rdBox');if(b)b.remove();},10000);
+}
+
+// ══════════════════════════════════════════════
+//  الأنيميشن
+// ══════════════════════════════════════════════
+function startSpkAnim(){
+  var b=document.getElementById('avB');  if(b) b.classList.add('spk');
+  var v=document.getElementById('vBars');if(v) v.classList.add('spkBars');
+}
+function stopSpkAnim(){
+  var b=document.getElementById('avB');  if(b) b.classList.remove('spk');
+  var v=document.getElementById('vBars');if(v) v.classList.remove('spkBars');
+}
+
+function stopAudio(){
+  try{
+    if(_au){_au.pause();_au.src='';_au=null;}
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+    if(window.responsiveVoice) responsiveVoice.cancel();
+  }catch(e){}
+  _busy=false;
+  stopSpkAnim();
+}
+
+function toggleSpk(){
+  voiceOn=!voiceOn;
+  stopAudio();
+  if(window.responsiveVoice) responsiveVoice.cancel();
+  var st=document.getElementById('vStatus');
+  if(st) st.textContent=voiceOn?'🔊':'🔇';
+  if(voiceOn){
+    toast('🔊 الصوت مفعّل — جارٍ الاختبار...');
+    setTimeout(function(){ spk('مرحباً الصوت يعمل الآن'); },400);
+  } else {
+    toast('🔇 الصوت موقوف');
+  }
+}
+
+// فتح AudioContext عند أول لمسة (مطلوب لجميع المتصفحات)
+function _unlock(){
+  getACtx();
+  loadVoices();
+  // تجهيز عنصر Audio مبكراً
+  try{ var a=new Audio(); a.volume=0; a.src='data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='; a.play().catch(function(){}); }catch(e){}
+}
+['touchstart','touchend','click','keydown'].forEach(function(ev){
+  document.addEventListener(ev,_unlock,{once:true,passive:true});
+});
+// ═══════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════
+const LTR=[
+  {l:'أ',n:'ألف',tr:'Alif',f:['أ','ا','ـا'],e:'أسد • أرنب • أمل • أزهار',ws:['أسد','أمل','أرض','أزرق']},
+  {l:'ب',n:'باء',tr:'Ba',f:['ب','بـ','ـبـ','ـب'],e:'بيت • باب • بحر • بلد',ws:['بيت','باب','بحر','برتقال']},
+  {l:'ت',n:'تاء',tr:'Ta',f:['ت','تـ','ـتـ','ـت'],e:'تفاح • تمر • تاريخ • تعلّم',ws:['تفاحة','تمر','تاريخ','تلميذ']},
+  {l:'ث',n:'ثاء',tr:'Tha',f:['ث','ثـ','ـثـ','ـث'],e:'ثعلب • ثلاثة • ثقافة',ws:['ثعلب','ثلج','ثمرة','ثقة']},
+  {l:'ج',n:'جيم',tr:'Jeem',f:['ج','جـ','ـجـ','ـج'],e:'جمل • جبل • جميل • جسم',ws:['جمل','جبل','جسد','جنة']},
+  {l:'ح',n:'حاء',tr:'Ha',f:['ح','حـ','ـحـ','ـح'],e:'حصان • حليب • حياة • حب',ws:['حصان','حليب','حقيبة','حرية']},
+  {l:'خ',n:'خاء',tr:'Kha',f:['خ','خـ','ـخـ','ـخ'],e:'خبز • خروف • خير • خضراء',ws:['خبز','خروف','خضروات','خريف']},
+  {l:'د',n:'دال',tr:'Dal',f:['د','ـد'],e:'دجاجة • دب • درس • دعاء',ws:['دراسة','دب','دجاجة','دواء']},
+  {l:'ذ',n:'ذال',tr:'Dhal',f:['ذ','ـذ'],e:'ذئب • ذهب • ذكاء • ذاكرة',ws:['ذئب','ذهب','ذكاء','ذرة']},
+  {l:'ر',n:'راء',tr:'Ra',f:['ر','ـر'],e:'رمان • رجل • ربيع • رسالة',ws:['رجل','ربيع','رسالة','رحلة']},
+  {l:'ز',n:'زاي',tr:'Zay',f:['ز','ـز'],e:'زيتون • زهرة • زمن • زاهر',ws:['زيت','زهرة','زمن','زرافة']},
+  {l:'س',n:'سين',tr:'Sin',f:['س','سـ','ـسـ','ـس'],e:'سمكة • سماء • سلام • سعادة',ws:['سماء','سمكة','سلام','سفر']},
+  {l:'ش',n:'شين',tr:'Shin',f:['ش','شـ','ـشـ','ـش'],e:'شمس • شجرة • شعر • شباب',ws:['شمس','شجرة','شاطئ','شتاء']},
+  {l:'ص',n:'صاد',tr:'Sad',f:['ص','صـ','ـصـ','ـص'],e:'صقر • صابون • صدق • صحة',ws:['صحة','صدق','صقر','صيف']},
+  {l:'ض',n:'ضاد',tr:'Dad',f:['ض','ضـ','ـضـ','ـض'],e:'ضفدع • ضوء • ضيف • ضمير',ws:['ضوء','ضيف','ضرورة','ضحكة']},
+  {l:'ط',n:'طاء',tr:'Ta',f:['ط','طـ','ـطـ','ـط'],e:'طاولة • طير • طريق • طبيب',ws:['طبيب','طريق','طاولة','طعام']},
+  {l:'ظ',n:'ظاء',tr:'Dha',f:['ظ','ظـ','ـظـ','ـظ'],e:'ظبي • ظل • ظلام • ظفر',ws:['ظل','ظبي','ظروف','ظهر']},
+  {l:'ع',n:'عين',tr:"'Ayn",f:['ع','عـ','ـعـ','ـع'],e:'عنب • عصفور • علم • عقل',ws:['علم','عقل','عنب','عيد']},
+  {l:'غ',n:'غين',tr:'Ghayn',f:['غ','غـ','ـغـ','ـغ'],e:'غزال • غيمة • غناء • غابة',ws:['غابة','غزال','غيمة','غداء']},
+  {l:'ف',n:'فاء',tr:'Fa',f:['ف','فـ','ـفـ','ـف'],e:'فراشة • فيل • فن • فرح',ws:['فرح','فيل','فراشة','فضاء']},
+  {l:'ق',n:'قاف',tr:'Qaf',f:['ق','قـ','ـقـ','ـق'],e:'قمر • قطة • قلب • قرآن',ws:['قمر','قلم','قطة','قصة']},
+  {l:'ك',n:'كاف',tr:'Kaf',f:['ك','كـ','ـكـ','ـك'],e:'كتاب • كلب • كرم • كلمة',ws:['كتاب','كلمة','كرسي','كلب']},
+  {l:'ل',n:'لام',tr:'Lam',f:['ل','لـ','ـلـ','ـل'],e:'ليمون • لبن • لغة • لون',ws:['لغة','لبن','ليمون','لحظة']},
+  {l:'م',n:'ميم',tr:'Meem',f:['م','مـ','ـمـ','ـم'],e:'مدرسة • ماء • محبة • منزل',ws:['ماء','محبة','منزل','مدرسة']},
+  {l:'ن',n:'نون',tr:'Nun',f:['ن','نـ','ـنـ','ـن'],e:'نمر • نجم • نور • نهر',ws:['نور','نجم','نهر','نبات']},
+  {l:'ه',n:'هاء',tr:'Ha',f:['ه','هـ','ـهـ','ـه'],e:'هرة • هلال • هدف • هواء',ws:['هواء','هلال','هدية','هادئ']},
+  {l:'و',n:'واو',tr:'Waw',f:['و','ـو'],e:'وردة • وجه • وطن • وقت',ws:['وطن','وقت','وردة','وداع']},
+  {l:'ي',n:'ياء',tr:'Ya',f:['ي','يـ','ـيـ','ـي'],e:'يد • يمامة • يقين • يوم',ws:['يوم','يد','ينبوع','يسار']},
+];
+
+const DIA=[
+  {m:'بَ',n:'الفتحة',d:'فتحة فوق الحرف — صوت قصير "اَ"',ex:'كَتَبَ • ذَهَبَ'},
+  {m:'بِ',n:'الكسرة',d:'كسرة تحت الحرف — صوت قصير "اِ"',ex:'بِسْمِ • كِتَابٍ'},
+  {m:'بُ',n:'الضمة',d:'ضمة فوق الحرف — صوت قصير "اُ"',ex:'كُتُبٌ • رُسُلٌ'},
+  {m:'بْ',n:'السكون',d:'دائرة فوق الحرف — الحرف ساكن لا حركة له',ex:'قُلْ • هَلْ'},
+  {m:'بّ',n:'الشدة',d:'تعني تضعيف الحرف ونطقه مرتين',ex:'مُحَمَّد • سُنَّة'},
+  {m:'بً',n:'تنوين الفتح',d:'فتحتان — نطق "اَنْ" في النهاية',ex:'كتاباً • شكراً'},
+  {m:'بٌ',n:'تنوين الضم',d:'ضمتان — نطق "اُنْ" في النهاية',ex:'كتابٌ • بيتٌ'},
+  {m:'بٍ',n:'تنوين الكسر',d:'كسرتان — نطق "اِنْ" في النهاية',ex:'كتابٍ • بيتٍ'},
+];
+
+const VOCAB=[
+  {a:'بيت',e:'House',c:'أماكن',col:'#00c9a7',tr:'bayt'},
+  {a:'مدرسة',e:'School',c:'أماكن',col:'#00c9a7',tr:'madrasa'},
+  {a:'مسجد',e:'Mosque',c:'أماكن',col:'#00c9a7',tr:'masjid'},
+  {a:'سوق',e:'Market',c:'أماكن',col:'#00c9a7',tr:'suq'},
+  {a:'مستشفى',e:'Hospital',c:'أماكن',col:'#00c9a7',tr:'mustashfa'},
+  {a:'مطبخ',e:'Kitchen',c:'أماكن',col:'#00c9a7',tr:'matbakh'},
+  {a:'حديقة',e:'Garden',c:'أماكن',col:'#00c9a7',tr:'hadiqah'},
+  {a:'مطار',e:'Airport',c:'أماكن',col:'#00c9a7',tr:'matar'},
+  {a:'تفاحة',e:'Apple',c:'طعام',col:'#ff6b9d',tr:'tuffaha'},
+  {a:'خبز',e:'Bread',c:'طعام',col:'#ff6b9d',tr:'khubz'},
+  {a:'ماء',e:'Water',c:'طعام',col:'#ff6b9d',tr:'ma'},
+  {a:'تمر',e:'Dates',c:'طعام',col:'#ff6b9d',tr:'tamr'},
+  {a:'عسل',e:'Honey',c:'طعام',col:'#ff6b9d',tr:"'asal"},
+  {a:'لبن',e:'Milk',c:'طعام',col:'#ff6b9d',tr:'laban'},
+  {a:'أرز',e:'Rice',c:'طعام',col:'#ff6b9d',tr:"'aruzz"},
+  {a:'سمك',e:'Fish',c:'طعام',col:'#ff6b9d',tr:'samak'},
+  {a:'دجاج',e:'Chicken',c:'طعام',col:'#ff6b9d',tr:'dajaj'},
+  {a:'زيت',e:'Oil',c:'طعام',col:'#ff6b9d',tr:'zayt'},
+  {a:'كتاب',e:'Book',c:'أشياء',col:'#c9a84c',tr:'kitab'},
+  {a:'قلم',e:'Pen',c:'أشياء',col:'#c9a84c',tr:'qalam'},
+  {a:'باب',e:'Door',c:'أشياء',col:'#c9a84c',tr:'bab'},
+  {a:'نافذة',e:'Window',c:'أشياء',col:'#c9a84c',tr:'nafidha'},
+  {a:'هاتف',e:'Phone',c:'أشياء',col:'#c9a84c',tr:'hatif'},
+  {a:'حقيبة',e:'Bag',c:'أشياء',col:'#c9a84c',tr:'haqiba'},
+  {a:'مفتاح',e:'Key',c:'أشياء',col:'#c9a84c',tr:'miftah'},
+  {a:'كرسي',e:'Chair',c:'أشياء',col:'#c9a84c',tr:'kursi'},
+  {a:'شمس',e:'Sun',c:'طبيعة',col:'#4fc3f7',tr:'shams'},
+  {a:'قمر',e:'Moon',c:'طبيعة',col:'#4fc3f7',tr:'qamar'},
+  {a:'نجم',e:'Star',c:'طبيعة',col:'#4fc3f7',tr:'najm'},
+  {a:'بحر',e:'Sea',c:'طبيعة',col:'#4fc3f7',tr:'bahr'},
+  {a:'جبل',e:'Mountain',c:'طبيعة',col:'#4fc3f7',tr:'jabal'},
+  {a:'نهر',e:'River',c:'طبيعة',col:'#4fc3f7',tr:'nahr'},
+  {a:'سماء',e:'Sky',c:'طبيعة',col:'#4fc3f7',tr:'sama'},
+  {a:'ريح',e:'Wind',c:'طبيعة',col:'#4fc3f7',tr:'rih'},
+  {a:'مطر',e:'Rain',c:'طبيعة',col:'#4fc3f7',tr:'matar'},
+  {a:'أب',e:'Father',c:'عائلة',col:'#c084fc',tr:"'ab"},
+  {a:'أم',e:'Mother',c:'عائلة',col:'#c084fc',tr:"'umm"},
+  {a:'أخ',e:'Brother',c:'عائلة',col:'#c084fc',tr:"'akh"},
+  {a:'أخت',e:'Sister',c:'عائلة',col:'#c084fc',tr:"'ukht"},
+  {a:'ابن',e:'Son',c:'عائلة',col:'#c084fc',tr:"'ibn"},
+  {a:'بنت',e:'Daughter',c:'عائلة',col:'#c084fc',tr:'bint'},
+  {a:'جدّ',e:'Grandfather',c:'عائلة',col:'#c084fc',tr:"'jadd"},
+  {a:'جدّة',e:'Grandmother',c:'عائلة',col:'#c084fc',tr:"'jaddah"},
+  {a:'كلب',e:'Dog',c:'حيوانات',col:'#a8e063',tr:'kalb'},
+  {a:'قطة',e:'Cat',c:'حيوانات',col:'#a8e063',tr:'qittah'},
+  {a:'أسد',e:'Lion',c:'حيوانات',col:'#a8e063',tr:"'asad"},
+  {a:'فيل',e:'Elephant',c:'حيوانات',col:'#a8e063',tr:'fil'},
+  {a:'حصان',e:'Horse',c:'حيوانات',col:'#a8e063',tr:'hisan'},
+  {a:'طائر',e:'Bird',c:'حيوانات',col:'#a8e063',tr:'tair'},
+  {a:'سمكة',e:'Fish',c:'حيوانات',col:'#a8e063',tr:'samakah'},
+  {a:'أحمر',e:'Red',c:'ألوان',col:'#ff5555',tr:"'ahmar"},
+  {a:'أزرق',e:'Blue',c:'ألوان',col:'#5599ff',tr:"'azraq"},
+  {a:'أخضر',e:'Green',c:'ألوان',col:'#55aa55',tr:"'akhdar"},
+  {a:'أصفر',e:'Yellow',c:'ألوان',col:'#ffdd44',tr:"'asfar"},
+  {a:'أبيض',e:'White',c:'ألوان',col:'#eeeeee',tr:"'abyad"},
+  {a:'أسود',e:'Black',c:'ألوان',col:'#555555',tr:"'aswad"},
+  {a:'برتقالي',e:'Orange',c:'ألوان',col:'#ff9933',tr:'burtuqali'},
+  {a:'بنفسجي',e:'Purple',c:'ألوان',col:'#9966cc',tr:'banafsaji'},
+];
+
+const GRAMMAR=[
+  {t:'المبتدأ والخبر',lv:'مبتدئ',col:'#00c9a7',
+   b:'الجملة الاسمية تتكون من مبتدأ وخبر. المبتدأ هو ما نتحدث عنه والخبر ما نقوله عنه. كلاهما مرفوع.',
+   e:'البيتُ كبيرٌ • الطالبُ مجتهدٌ • السماءُ صافيةٌ',
+   tip:'تذكر: الجملة الاسمية تبدأ دائماً باسم وليس بفعل.'},
+  {t:'الفعل الماضي',lv:'مبتدئ',col:'#00c9a7',
+   b:'يدل على حدث وقع في الزمن الماضي. يُبنى على الفتح مع المفرد، والضم مع الواو، والسكون مع التاء المتحركة.',
+   e:'ذهبَ • كتبتُ • قرأوا • سافرنا • أكلتِ',
+   tip:'الفعل الماضي مبني دائماً لا معرب.'},
+  {t:'الفعل المضارع',lv:'مبتدئ',col:'#00c9a7',
+   b:'يدل على حدث يحدث الآن أو في المستقبل. يبدأ بأحرف المضارعة: أنيت (أ، ن، ي، ت).',
+   e:'يكتبُ • تذهبينَ • نقرأُ • أدرسُ • يلعبون',
+   tip:'حروف المضارعة تُجمع في كلمة "أنيت".'},
+  {t:'الفعل الأمر',lv:'متوسط',col:'#c9a84c',
+   b:'يدل على طلب القيام بفعل. يُبنى على السكون للمفرد المذكر، والحذف للمثنى والجمع والمؤنث.',
+   e:'اكتُبْ • اذهبي • ادرسوا • افتحا',
+   tip:'الأمر يُبنى على السكون في الأصل.'},
+  {t:'التنوين وأنواعه',lv:'مبتدئ',col:'#00c9a7',
+   b:'التنوين نون ساكنة زائدة تلحق آخر الاسم النكرة. أنواعه ثلاثة: تنوين الضم والفتح والكسر.',
+   e:'كتابٌ (ضم) • كتاباً (فتح) • كتابٍ (كسر)',
+   tip:'المعرفة لا تُنوَّن — الكلمة المبدوءة بـ "ال" لا تأخذ تنويناً.'},
+  {t:'الجمع: مذكر سالم',lv:'متوسط',col:'#c9a84c',
+   b:'يُجمع جمع المذكر السالم بإضافة واو ونون (رفع) أو ياء ونون (نصب وجر).',
+   e:'مسلمون/مسلمين • معلمون/معلمين • مؤمنون',
+   tip:'خاص بجمع العاقل المذكر السالم الصحيح الآخر.'},
+  {t:'الجمع: مؤنث سالم',lv:'متوسط',col:'#c9a84c',
+   b:'يُجمع جمع المؤنث السالم بإضافة ألف وتاء (ات) لآخر الاسم المفرد.',
+   e:'معلمة → معلمات • طالبة → طالبات • سيارة → سيارات',
+   tip:'لا يختلف إعرابه رفعاً ونصباً وجراً — مرفوع بالضمة، منصوب ومجرور بالكسرة.'},
+  {t:'الإضافة',lv:'متوسط',col:'#4fc3f7',
+   b:'تركيب يُضاف فيه اسم لآخر. المضاف يُجرَّد من التنوين وأل، والمضاف إليه يُجَرّ دائماً.',
+   e:'كتابُ الطالبِ • بابُ البيتِ • نورُ الشمسِ',
+   tip:'المضاف إليه مجرور أبداً بالكسرة أو ما ناب عنها.'},
+  {t:'النعت والمنعوت',lv:'متوسط',col:'#4fc3f7',
+   b:'النعت هو الوصف. يتبع المنعوت في الإعراب والجنس والعدد والتعريف.',
+   e:'الطالبُ المجتهدُ • بيتٌ كبيرٌ • فتاةٌ جميلةٌ',
+   tip:'النعت يتبع المنعوت في أربعة أشياء: رفع/نصب/جر، التذكير/التأنيث، الإفراد/التثنية/الجمع، التعريف/التنكير.'},
+  {t:'المفعول به',lv:'متوسط',col:'#ff6b9d',
+   b:'اسم منصوب يدل على من وقع عليه فعل الفاعل. علامة نصبه الفتحة أو ما ناب عنها.',
+   e:'قرأتُ الكتابَ • رأيتُ الطالبَ • أكلتُ التفاحةَ',
+   tip:'السؤال عن المفعول به: ماذا فعل؟ أو مَن فعل به؟'},
+  {t:'الضمائر المنفصلة',lv:'مبتدئ',col:'#a8e063',
+   b:'ضمائر مستقلة تُستخدم للتعبير عن الشخص.',
+   e:'أنا • أنتَ • أنتِ • هو • هي • نحن • أنتم • هم',
+   tip:'الضمائر لا تتغير إعرابياً — هي مبنية دائماً.'},
+  {t:'أدوات الاستفهام',lv:'مبتدئ',col:'#a8e063',
+   b:'أدوات تُستخدم لطرح الأسئلة في اللغة العربية.',
+   e:'مَن؟ • ما؟ • ماذا؟ • أين؟ • متى؟ • كيف؟ • لماذا؟ • كم؟',
+   tip:'مَن للعاقل، وما لغير العاقل في الغالب.'},
+];
+
+const NUMS=[
+  {n:'٠',w:0,nm:'صفر'},{n:'١',w:1,nm:'واحد'},{n:'٢',w:2,nm:'اثنان'},{n:'٣',w:3,nm:'ثلاثة'},
+  {n:'٤',w:4,nm:'أربعة'},{n:'٥',w:5,nm:'خمسة'},{n:'٦',w:6,nm:'ستة'},{n:'٧',w:7,nm:'سبعة'},
+  {n:'٨',w:8,nm:'ثمانية'},{n:'٩',w:9,nm:'تسعة'},{n:'١٠',w:10,nm:'عشرة'},{n:'١١',w:11,nm:'أحد عشر'},
+  {n:'١٢',w:12,nm:'اثنا عشر'},{n:'١٣',w:13,nm:'ثلاثة عشر'},{n:'١٤',w:14,nm:'أربعة عشر'},
+  {n:'١٥',w:15,nm:'خمسة عشر'},{n:'١٦',w:16,nm:'ستة عشر'},{n:'١٧',w:17,nm:'سبعة عشر'},
+  {n:'١٨',w:18,nm:'ثمانية عشر'},{n:'١٩',w:19,nm:'تسعة عشر'},{n:'٢٠',w:20,nm:'عشرون'},
+];
+const NUMS2=[
+  {n:'٣٠',w:30,nm:'ثلاثون'},{n:'٤٠',w:40,nm:'أربعون'},{n:'٥٠',w:50,nm:'خمسون'},
+  {n:'٦٠',w:60,nm:'ستون'},{n:'٧٠',w:70,nm:'سبعون'},{n:'٨٠',w:80,nm:'ثمانون'},
+  {n:'٩٠',w:90,nm:'تسعون'},{n:'١٠٠',w:100,nm:'مئة'},{n:'٢٠٠',w:200,nm:'مئتان'},
+  {n:'٥٠٠',w:500,nm:'خمسمئة'},{n:'١٠٠٠',w:1000,nm:'ألف'},{n:'١٠٠٠٠٠٠',w:1000000,nm:'مليون'},
+];
+const NUMS3=[
+  {n:'الأول',w:'1st',nm:'أول'},{n:'الثاني',w:'2nd',nm:'ثاني'},{n:'الثالث',w:'3rd',nm:'ثالث'},
+  {n:'الرابع',w:'4th',nm:'رابع'},{n:'الخامس',w:'5th',nm:'خامس'},{n:'السادس',w:'6th',nm:'سادس'},
+  {n:'السابع',w:'7th',nm:'سابع'},{n:'الثامن',w:'8th',nm:'ثامن'},{n:'التاسع',w:'9th',nm:'تاسع'},
+  {n:'العاشر',w:'10th',nm:'عاشر'},
+];
+const DAYS=[
+  {em:'🌟',a:'الأحد',e:'Sunday'},{em:'🌙',a:'الاثنين',e:'Monday'},{em:'🔥',a:'الثلاثاء',e:'Tuesday'},
+  {em:'💧',a:'الأربعاء',e:'Wednesday'},{em:'⚡',a:'الخميس',e:'Thursday'},{em:'🌿',a:'الجمعة',e:'Friday'},
+  {em:'🌸',a:'السبت',e:'Saturday'},
+];
+const MONTHS=[
+  {em:'❄️',a:'يناير',e:'January'},{em:'💝',a:'فبراير',e:'February'},{em:'🌱',a:'مارس',e:'March'},
+  {em:'🌸',a:'أبريل',e:'April'},{em:'🌻',a:'مايو',e:'May'},{em:'☀️',a:'يونيو',e:'June'},
+  {em:'🏖️',a:'يوليو',e:'July'},{em:'🌊',a:'أغسطس',e:'August'},{em:'🍂',a:'سبتمبر',e:'September'},
+  {em:'🎃',a:'أكتوبر',e:'October'},{em:'🍁',a:'نوفمبر',e:'November'},{em:'🎄',a:'ديسمبر',e:'December'},
+];
+const COLORS=[
+  {a:'أحمر',e:'Red',bg:'#e53935',txt:'white'},{a:'أزرق',e:'Blue',bg:'#1e88e5',txt:'white'},
+  {a:'أخضر',e:'Green',bg:'#43a047',txt:'white'},{a:'أصفر',e:'Yellow',bg:'#fdd835',txt:'#333'},
+  {a:'أبيض',e:'White',bg:'#f5f5f5',txt:'#333'},{a:'أسود',e:'Black',bg:'#212121',txt:'white'},
+  {a:'برتقالي',e:'Orange',bg:'#fb8c00',txt:'white'},{a:'بنفسجي',e:'Purple',bg:'#8e24aa',txt:'white'},
+  {a:'وردي',e:'Pink',bg:'#e91e63',txt:'white'},{a:'بني',e:'Brown',bg:'#6d4c41',txt:'white'},
+  {a:'رمادي',e:'Gray',bg:'#757575',txt:'white'},{a:'ذهبي',e:'Golden',bg:'#c9a84c',txt:'white'},
+];
+
+const PHRASES=[
+  {cat:'تحيات',a:'السلام عليكم',e:'Peace be upon you',tip:'التحية الإسلامية الرسمية'},
+  {cat:'تحيات',a:'وعليكم السلام',e:'And upon you peace',tip:'الرد على السلام'},
+  {cat:'تحيات',a:'صباح الخير',e:'Good morning',tip:'تحية الصباح'},
+  {cat:'تحيات',a:'صباح النور',e:'Morning of light',tip:'الرد على صباح الخير'},
+  {cat:'تحيات',a:'مساء الخير',e:'Good evening',tip:'تحية المساء'},
+  {cat:'تحيات',a:'مساء النور',e:'Evening of light',tip:'الرد على مساء الخير'},
+  {cat:'تحيات',a:'أهلاً وسهلاً',e:'Welcome',tip:'ترحيب بالضيف'},
+  {cat:'تحيات',a:'مع السلامة',e:'Goodbye',tip:'وداع'},
+  {cat:'تحيات',a:'إلى اللقاء',e:'See you later',tip:'وداع ودي'},
+  {cat:'تحيات',a:'كيف حالك؟',e:'How are you?',tip:'سؤال عن الحال'},
+  {cat:'تحيات',a:'بخير، شكراً',e:'Fine, thank you',tip:'رد على كيف حالك'},
+  {cat:'يومي',a:'من فضلك',e:'Please',tip:'طلب بأدب'},
+  {cat:'يومي',a:'شكراً جزيلاً',e:'Thank you very much',tip:'شكر وامتنان'},
+  {cat:'يومي',a:'عفواً',e:'You are welcome / Excuse me',tip:'للعفو أو الاعتذار'},
+  {cat:'يومي',a:'آسف / أنا آسف',e:'Sorry / I am sorry',tip:'الاعتذار'},
+  {cat:'يومي',a:'لا أفهم',e:'I do not understand',tip:'عند عدم الفهم'},
+  {cat:'يومي',a:'هل تتكلم العربية؟',e:'Do you speak Arabic?',tip:'سؤال عن اللغة'},
+  {cat:'يومي',a:'تكلم ببطء من فضلك',e:'Please speak slowly',tip:'طلب الإبطاء'},
+  {cat:'يومي',a:'ما هذا؟',e:'What is this?',tip:'السؤال عن شيء'},
+  {cat:'يومي',a:'بكم هذا؟',e:'How much is this?',tip:'السؤال عن السعر'},
+  {cat:'يومي',a:'أين الحمام؟',e:'Where is the bathroom?',tip:'سؤال مفيد'},
+  {cat:'يومي',a:'أنا جائع',e:'I am hungry',tip:'التعبير عن الجوع'},
+  {cat:'يومي',a:'أنا عطشان',e:'I am thirsty',tip:'التعبير عن العطش'},
+  {cat:'دين',a:'بسم الله',e:'In the name of God',tip:'تُقال عند البدء بأي عمل'},
+  {cat:'دين',a:'الحمد لله',e:'Praise be to God',tip:'شكر الله'},
+  {cat:'دين',a:'إن شاء الله',e:'God willing',tip:'للأمور المستقبلية'},
+  {cat:'دين',a:'ما شاء الله',e:'What God has willed',tip:'للتعبير عن الإعجاب'},
+  {cat:'دين',a:'سبحان الله',e:'Glory be to God',tip:'للتسبيح والتعجب'},
+  {cat:'دين',a:'الله أكبر',e:'God is the greatest',tip:'للتكبير'},
+  {cat:'دين',a:'أستغفر الله',e:'I seek forgiveness from God',tip:'للاستغفار'},
+  {cat:'سفر',a:'أريد تذكرة إلى...',e:'I want a ticket to...',tip:'في المطار أو المحطة'},
+  {cat:'سفر',a:'أين الفندق؟',e:'Where is the hotel?',tip:'سؤال عن الفندق'},
+  {cat:'سفر',a:'هل يوجد مطعم قريب؟',e:'Is there a restaurant nearby?',tip:'البحث عن مطعم'},
+  {cat:'طوارئ',a:'اتصل بالشرطة!',e:'Call the police!',tip:'في حالات الطوارئ'},
+  {cat:'طوارئ',a:'أحتاج طبيباً',e:'I need a doctor',tip:'في حالة المرض'},
+  {cat:'طوارئ',a:'ساعدني!',e:'Help me!',tip:'طلب المساعدة العاجلة'},
+];
+
+const STORIES=[
+  {t:'الأسد والفأر',lv:'مبتدئ',col:'#00c9a7',
+   prev:'حكاية عن الصداقة والوفاء بين أقوى الحيوانات وأصغرها...',
+   body:`كانَ أسدٌ نائماً في الغابةِ الكبيرةِ، فمرَّ فأرٌ صغيرٌ بجانبِه وأيقظَه. غضبَ الأسدُ وأمسكَ بالفأرِ بين قدميهِ الضخمتين.
+
+قالَ الفأرُ بصوتٍ خائفٍ: "أرجوكَ أيُّها الملكُ، أطلِقْ سراحي! وسأكافئُكَ يوماً ما بالتأكيد!"
+
+ابتسمَ الأسدُ ساخراً وقال: "وكيفَ لفأرٍ صغيرٍ مثلكَ أن يساعدَ ملكَ الغابة؟!" لكنَّه أطلقَ سراحَه رحمةً به.
+
+وبعدَ أيامٍ قليلةٍ، وقعَ الأسدُ في شبكةٍ نصبَها صيادٌ ماهرٌ. وجاءَ الفأرُ الصغيرُ وقطعَ الحبالَ بأسنانِه الحادةِ حتى تحرَّرَ الأسدُ.
+
+قالَ الأسدُ بامتنانٍ: "شكراً صديقي الصغير، لقد تعلَّمتُ أنَّ لكلِّ مخلوقٍ قيمتَه!"`,
+   words:['نائماً','أيقظَ','سراحَ','شبكة','تحرَّرَ','امتنان']},
+  {t:'الغراب والثعلب',lv:'متوسط',col:'#c9a84c',
+   prev:'حكمة خالدة عن مخاطر الغرور والإطراء الكاذب...',
+   body:`وقفَ غرابٌ أسودُ على غصنِ شجرةٍ طويلةٍ وفي منقارِه قطعةٌ من الجبنِ الشهيِّ. رآهُ ثعلبٌ ماكرٌ يمشي في الأسفلِ، فتوقَّفَ وفكَّرَ بالحيلةِ.
+
+قالَ الثعلبُ بصوتٍ حلوٍ: "يا سيدَ الطيورِ! يا من يتفوَّقُ على الجميعِ جمالاً! ما أجملَكَ وما أروعَكَ! هلّا تفضَّلتَ علينا بصوتِكَ العذبِ؟"
+
+فرحَ الغرابُ بهذا المديحِ فرحاً شديداً وفتحَ منقارَه ليُغنِّيَ أجملَ أغنيةٍ. وما إن فتحَ فمَه حتى سقطتِ الجبنةُ في الأسفلِ.
+
+التقطَها الثعلبُ بسرعةٍ وابتعدَ ضاحكاً قائلاً: "من وثقَ بالمُطرين غيرِ الصادقين خسرَ ما يملك!"`,
+   words:['منقار','ماكر','إطراء','المديح','ضاحكاً','الحيلة']},
+  {t:'النملة والجرادة',lv:'متوسط',col:'#ff6b9d',
+   prev:'حكمة عن أهمية العمل والتخطيط للمستقبل...',
+   body:`في فصلِ الصيفِ الحارِّ، كانتِ النملةُ الصغيرةُ تعملُ بلا كللٍ ولا ملل، تجمعُ الطعامَ وتخزِّنُه بجدٍّ واجتهادٍ لفصلِ الشتاءِ.
+
+فمرَّت بها الجرادةُ وهي تُغنِّي وتلعبُ مستمتعةً بدفءِ الصيف، فقالت: "يا نملةُ! لماذا تتعبين نفسَكِ؟ الصيفُ جميلٌ والحياةُ قصيرةٌ، استمتعي!"
+
+فردَّت النملةُ بحكمةٍ: "أنا أستعدُّ للشتاءِ القادمِ. الوقتُ من ذهبٍ."
+
+حينَ جاءَ الشتاءُ بصقيعِه وبردِه القارسِ، كانتِ النملةُ دافئةً وشبعانةً في بيتِها المريحِ، بينما كانتِ الجرادةُ تعاني من البردِ والجوعِ الشديد.`,
+   words:['تخزِّن','اجتهاد','استمتعي','القارس','الصقيع','تعاني']},
+  {t:'الكلب الحريص',lv:'متوسط',col:'#4fc3f7',
+   prev:'قصة عن الجشع وكيف يُفقد الإنسان ما يملك...',
+   body:`كانَ كلبٌ يحملُ في فمِه قطعةً كبيرةً من اللحمِ يمشي بها بفرحٍ نحوَ بيتِه. وفي طريقِه كانَ يمرُّ على جسرٍ صغيرٍ فوقَ نهرٍ صافٍ.
+
+نظرَ الكلبُ إلى الماءِ فرأى انعكاسَه فيه وحسبَه كلباً آخرَ يحملُ لحماً أكبرَ منه. طمعَ في تلكَ القطعةِ فنبحَ نحوَ الصورةِ ليأخذَها.
+
+وما إن فتحَ فمَه للنباحِ حتى سقطتِ قطعةُ اللحمِ منه في الماءِ واختفتْ. فبقيَ الكلبُ جائعاً يندمُ على جشعِه.`,
+   words:['انعكاس','جسر','طمع','نبح','يندم','جشع']},
+  {t:'الأرنب والسلحفاة',lv:'مبتدئ',col:'#a8e063',
+   prev:'الدرس الخالد: التواضع والمثابرة تتغلب على الغرور...',
+   body:`تباهى أرنبٌ سريعٌ بسرعتِه أمامَ السلحفاةِ البطيئةِ وسخرَ منها. فتحدَّتِ السلحفاةُ الأرنبَ إلى سباقٍ.
+
+في يومِ السباقِ، انطلقَ الأرنبُ بسرعةِ البرقِ ثم جلسَ تحتَ شجرةٍ واثقاً من فوزِه ونامَ.
+
+أما السلحفاةُ فمشتْ ببطءٍ لكن بثباتٍ لم تتوقفْ لحظةً واحدةً حتى وصلتِ إلى نهايةِ المضمار وفازتْ.
+
+استيقظَ الأرنبُ فوجدَ السلحفاةَ قد سبقتْه وتحتفلُ بالفوز. تعلَّمَ الجميعُ: المثابرةُ والصبرُ أقوى من السرعةِ والغرورِ.`,
+   words:['تباهى','تحدَّت','بثبات','المثابرة','الغرور','المضمار']},
+];
+
+const SPELL_DB=[
+  {w:'انا',c:'أنا',t:'همزة القطع في "أنا"'},
+  {w:'اكل',c:'أكل',t:'همزة القطع في الأفعال'},
+  {w:'اخذ',c:'أخذ',t:'همزة القطع في الأفعال'},
+  {w:'اعطى',c:'أعطى',t:'همزة القطع في الأفعال'},
+  {w:'المدرسه',c:'المدرسة',t:'التاء المربوطة وليس الهاء'},
+  {w:'الحياه',c:'الحياة',t:'التاء المربوطة وليس الهاء'},
+  {w:'العائله',c:'العائلة',t:'التاء المربوطة وليس الهاء'},
+  {w:'السياره',c:'السيارة',t:'التاء المربوطة وليس الهاء'},
+  {w:'الصلاه',c:'الصلاة',t:'التاء المربوطة وليس الهاء'},
+  {w:'المدينه',c:'المدينة',t:'التاء المربوطة وليس الهاء'},
+  {w:'بالامس',c:'بالأمس',t:'همزة القطع'},
+  {w:'الى',c:'إلى',t:'همزة الكسر في حرف الجر'},
+  {w:'على',c:'على',t:'صحيح ✓'},
+  {w:'ان',c:'إن',t:'همزة الكسر في الحرف المشبَّه بالفعل'},
+  {w:'اخي',c:'أخي',t:'همزة القطع'},
+  {w:'امي',c:'أمي',t:'همزة القطع'},
+  {w:'ابي',c:'أبي',t:'همزة القطع'},
+  {w:'الاول',c:'الأول',t:'همزة القطع'},
+  {w:'هاذا',c:'هذا',t:'اسم الإشارة يُكتب بلا ألف'},
+  {w:'هاذه',c:'هذه',t:'اسم الإشارة يُكتب بلا ألف'},
+  {w:'هاذان',c:'هذان',t:'اسم الإشارة يُكتب بلا ألف'},
+  {w:'لاكن',c:'لكن',t:'حرف العطف لكن يُكتب بلا ألف'},
+  {w:'ذالك',c:'ذلك',t:'اسم الإشارة ذلك يُكتب بلا ألف'},
+  {w:'اللذي',c:'الذي',t:'الاسم الموصول الذي يُكتب بلام واحدة'},
+  {w:'اللتي',c:'التي',t:'الاسم الموصول التي يُكتب بلام واحدة'},
+  {w:'بهاذا',c:'بهذا',t:'اسم الإشارة بدون ألف'},
+  {w:'مئه',c:'مئة',t:'التاء المربوطة'},
+  {w:'سنه',c:'سنة',t:'التاء المربوطة'},
+  {w:'قريه',c:'قرية',t:'التاء المربوطة'},
+  {w:'نعمه',c:'نعمة',t:'التاء المربوطة'},
+  {w:'رحمه',c:'رحمة',t:'التاء المربوطة'},
+  {w:'خليقه',c:'خليقة',t:'التاء المربوطة'},
+];
+
+const COM_ERR=[
+  {w:'المدرسه → المدرسة',r:'التاء المربوطة في نهاية الكلمة'},
+  {w:'هاذا → هذا',r:'أسماء الإشارة بلا ألف زائدة'},
+  {w:'لاكن → لكن',r:'حروف العطف بلا ألف'},
+  {w:'انا → أنا',r:'همزة القطع "أنا" دائماً'},
+  {w:'اكل / اخذ → أكل / أخذ',r:'همزة القطع في الأفعال'},
+  {w:'الى / الاول → إلى / الأول',r:'الهمزة حسب الموضع'},
+  {w:'اللذي → الذي',r:'الاسم الموصول بلام واحدة'},
+  {w:'ذالك → ذلك',r:'اسم الإشارة "ذلك" بلا ألف'},
+];
+
+const SP_RULES=[
+  {t:'قاعدة التاء المربوطة',r:'كل اسم مؤنث ينتهي بصوت "هـ" يُكتب بتاء مربوطة (ة) وليس بهاء (ه).',ex:'مدرسة ✓ — مدرسه ✗'},
+  {t:'همزة القطع والوصل',r:'همزة القطع (أ/إ) تُنطق دائماً. همزة الوصل (ا) تُنطق في بداية الكلام فقط.',ex:'أكل، إلى، أنا (قطع) — الكتاب، اكتب (وصل)'},
+  {t:'أسماء الإشارة',r:'تُكتب بدون ألف زائدة: هذا، هذه، هذان، ذلك، تلك.',ex:'هذا ✓ — هاذا ✗ | ذلك ✓ — ذالك ✗'},
+  {t:'الأسماء الموصولة',r:'الذي، التي، الذين — تُكتب بلام واحدة فقط.',ex:'الذي ✓ — اللذي ✗'},
+  {t:'التنوين والألف',r:'المنوَّن بالفتح يُكتب بعده ألف إلا إذا انتهى بتاء مربوطة أو همزة على الألف.',ex:'كتاباً ✓ — مدرسةً ✓ (بلا ألف)'},
+];
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let learned = new Set([...Array(24).keys()]);
+let selLtr = null;
+let vFlt = 'الكل';
+let qS = {c:0,w:0,t:0};
+let qData=[], qIdx=0, qType='all';
+let spCorrected = '';
+
+// ═══════════════════════════════════════════════
+//  PARTICLES
+// ═══════════════════════════════════════════════
+const cvs=document.getElementById('pCvs');
+const ctx2=cvs.getContext('2d');
+let parts=[];
+function rsz(){cvs.width=innerWidth;cvs.height=innerHeight;}
+rsz();window.addEventListener('resize',rsz);
+const ARC='ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
+class P{
+  constructor(){this.rst();}
+  rst(){this.x=Math.random()*cvs.width;this.y=cvs.height+50;this.sz=12+Math.random()*24;this.sp=.28+Math.random()*.7;this.op=.025+Math.random()*.045;this.ch=ARC[Math.floor(Math.random()*ARC.length)];this.rot=Math.random()*Math.PI*2;this.rs=(Math.random()-.5)*.018;this.hue=32+Math.random()*28;}
+  upd(){this.y-=this.sp;this.rot+=this.rs;if(this.y<-60)this.rst();}
+  drw(){ctx2.save();ctx2.translate(this.x,this.y);ctx2.rotate(this.rot);ctx2.globalAlpha=this.op;ctx2.fillStyle=`hsl(${this.hue},70%,65%)`;ctx2.font=`${this.sz}px Amiri`;ctx2.textAlign='center';ctx2.fillText(this.ch,0,0);ctx2.restore();}
+}
+for(let i=0;i<65;i++){const p=new P();p.y=Math.random()*cvs.height;parts.push(p);}
+function animP(){if(!fxOn){requestAnimationFrame(animP);return;}ctx2.clearRect(0,0,cvs.width,cvs.height);parts.forEach(p=>{p.upd();p.drw();});requestAnimationFrame(animP);}
+animP();
+
+// ═══════════════════════════════════════════════
+//  CLOCK
+// ═══════════════════════════════════════════════
+const ADY=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const AMO=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const HMO=['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الثانية','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+const an=n=>String(n).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+function hijri(d){try{const jd=Math.floor(d.getTime()/86400000+2440587.5);const l=jd-1948440+10632;const n=Math.floor((l-1)/10631);const r=l-10631*n+354;const j=Math.floor((10985-r)/5316)*Math.floor(50*r/17719)+Math.floor(r/5670)*Math.floor(43*r/15238);const r2=r-Math.floor((30-j)/15)*Math.floor(17719*j/50)-Math.floor(j/16)*Math.floor(15238*j/43)+29;const mo=Math.floor(24*r2/709);const dy=r2-Math.floor(709*mo/24);const yr=30*n+j-30;return{d:dy,m:mo-1,y:yr};}catch(e){return null;}}
+function tick(){const now=new Date();const h=String(now.getHours()).padStart(2,'0');const m=String(now.getMinutes()).padStart(2,'0');const s=String(now.getSeconds()).padStart(2,'0');document.getElementById('cT').textContent=an(`${h}:${m}:${s}`);document.getElementById('cD').textContent=`${ADY[now.getDay()]}، ${an(now.getDate())} ${AMO[now.getMonth()]} ${an(now.getFullYear())}م`;const hj=hijri(now);if(hj)document.getElementById('cH').textContent=`${an(hj.d)} ${HMO[hj.m]} ${an(hj.y)}هـ`;}
+setInterval(tick,1000);tick();
+
+// ═══════════════════════════════════════════════
+//  SECTION NAVIGATION
+// ═══════════════════════════════════════════════
+function showSec(id,tb){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const s=document.getElementById('s-'+id);if(s)s.classList.add('on');
+  if(tb)tb.classList.add('on');
+  clickBeep();
+}
+
+// ═══════════════════════════════════════════════
+//  ALPHABET
+// ═══════════════════════════════════════════════
+function renderAlpha(){
+  document.getElementById('aGrid').innerHTML=LTR.map((l,i)=>`
+    <div class="ltr${learned.has(i)?' ok':''}" onclick="selLtrFn(${i})">
+      <span class="lbig">${l.l}</span><span class="lnm">${l.n}</span>
+    </div>`).join('');
+}
+function selLtrFn(i){
+  selLtr=i;const l=LTR[i];
+  document.getElementById('ldet').style.display='block';
+  document.getElementById('dlH').textContent=l.l;
+  document.getElementById('dlN').textContent=l.n;
+  document.getElementById('dlTr').textContent=`النطق: ${l.tr}`;
+  document.getElementById('dlF').innerHTML=l.f.map(f=>`<span class="fchip">${f}</span>`).join('');
+  document.getElementById('dlE').textContent='📝 '+l.e;
+  document.getElementById('dlWList').innerHTML=l.ws.map(w=>`<span onclick="spk('${w}')" style="background:rgba(201,168,76,.1);border:1px solid var(--border);padding:4px 12px;border-radius:50px;cursor:pointer;font-family:'Amiri',serif;color:var(--gold-l)">${w}</span>`).join('');
+  document.getElementById('ldet').scrollIntoView({behavior:'smooth',block:'nearest'});
+  spk(l.n);
+}
+function spkLtr(){if(selLtr!==null)spk(LTR[selLtr].n);}
+function spkLtrEx(){if(selLtr!==null)spk(LTR[selLtr].e.replace(/•/g,'،'));}
+function markOk(){if(selLtr===null)return;learned.add(selLtr);renderAlpha();correctBeep();toast('✨ ممتاز! تعلمت حرف '+LTR[selLtr].n);spk('ممتاز تعلمت حرف '+LTR[selLtr].n);document.getElementById('ldet').style.display='none';}
+function resetAlpha(){learned.clear();renderAlpha();toast('🔄 تم إعادة تعيين الحروف');}
+function renderDia(){
+  document.getElementById('diaGrid').innerHTML=DIA.map(d=>`
+    <div class="diacard" data-n="${d.n}" data-d="${d.d}" onclick="spkDia(this)">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <span class="diamark">${d.m}</span>
+        <div><strong style="color:var(--gold-l)">${d.n}</strong><br><span style="font-size:.84rem;color:var(--dim)">${d.d}</span><br><span style="font-family:'Amiri',serif;font-size:.95rem;color:var(--teal)">${d.ex}</span></div>
+        <button class="btn bg" style="padding:6px 14px;font-size:.8rem;margin-right:auto" onclick="event.stopPropagation();spk('${d.nm}. مثال: ${d.ex}')">🔊</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  VOCABULARY
+// ═══════════════════════════════════════════════
+function renderVFltrs(){
+  const cats=['الكل',...new Set(VOCAB.map(v=>v.c))];
+  document.getElementById('vFltrs').innerHTML=cats.map(c=>`<button class="fbtn${c==='الكل'?' on':''}" onclick="setVF('${c}',this)">${c}</button>`).join('');
+}
+function setVF(c,b){vFlt=c;document.querySelectorAll('#vFltrs .fbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');filtV(document.getElementById('vSrch').value);}
+function filtV(s){
+  const arr=VOCAB.filter(v=>(vFlt==='الكل'||v.c===vFlt)&&(v.a.includes(s)||v.e.toLowerCase().includes(s.toLowerCase())));
+  document.getElementById('vGrid').innerHTML=arr.length?arr.map(v=>`
+    <div class="vc" data-a="${v.a}" data-e="${v.e}" onclick="spkVoc(this)">
+      <span class="vfav" onclick="event.stopPropagation();this.textContent=this.textContent==='⭐'?'☆':'⭐'">☆</span>
+      <div style="width:7px;height:7px;border-radius:50%;background:${v.col};margin-bottom:7px"></div>
+      <div class="va">${v.a}</div>
+      <div class="ve">${v.e}</div>
+      <div style="font-size:.7rem;color:var(--dim);font-style:italic;margin-top:3px">${v.tr}</div>
+      <div style="margin-top:6px;font-size:.69rem;background:rgba(255,255,255,.05);padding:2px 9px;border-radius:50px;display:inline-block;color:var(--dim)">${v.c}</div>
+    </div>`).join(''):'<p style="color:var(--dim);text-align:center;grid-column:1/-1;padding:38px">لا توجد نتائج 🔍</p>';
+}
+
+// ═══════════════════════════════════════════════
+//  GRAMMAR
+// ═══════════════════════════════════════════════
+function renderGrammar(){
+  document.getElementById('gList').innerHTML=GRAMMAR.map((g,i)=>`
+    <div class="git" onclick="togG(${i})">
+      <div class="ghd">
+        <h3>${g.t}</h3>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="padding:3px 11px;border-radius:50px;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.07);color:${g.col}">${g.lv}</span>
+          <span style="color:var(--dim);font-size:.9rem">▾</span>
+        </div>
+      </div>
+      <div class="gbd" id="gb${i}">
+        <p>${g.b}</p>
+        <div class="gex">${g.e}</div>
+        <div style="margin-top:8px;padding:9px 13px;background:rgba(0,201,167,.07);border-radius:9px;font-size:.82rem;color:var(--teal)">💡 ${g.tip}</div>
+        <div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap">
+          <button class="btn bg" style="padding:6px 14px;font-size:.8rem" onclick="event.stopPropagation();spkG(${i},0)">🔊 اشرح لي</button>
+          <button class="btn bo" style="padding:6px 14px;font-size:.8rem" onclick="event.stopPropagation();spkG(${i},1)">🔊 الأمثلة</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function togG(i){document.getElementById('gb'+i).classList.toggle('op');}
+
+// ═══════════════════════════════════════════════
+//  NUMBERS
+// ═══════════════════════════════════════════════
+function renderNums(){
+  document.getElementById('numGrid').innerHTML=NUMS.map(n=>`
+    <div class="ncard" data-nm="${n.nm}" data-n="${n.n}" onclick="spkNum(this)">
+      <div class="narab">${n.n}</div>
+      <div class="nwest">${n.w}</div>
+      <div class="nname">${n.nm}</div>
+    </div>`).join('');
+  document.getElementById('numGrid2').innerHTML=NUMS2.map(n=>`
+    <div class="ncard" data-nm="${n.nm}" data-n="${n.n}" onclick="spkNum(this)">
+      <div class="narab">${n.n}</div>
+      <div class="nwest">${n.w.toLocaleString()}</div>
+      <div class="nname">${n.nm}</div>
+    </div>`).join('');
+  document.getElementById('numGrid3').innerHTML=NUMS3.map(n=>`
+    <div class="ncard" data-nm="${n.nm}" data-n="${n.n}" onclick="spkNum(this)">
+      <div style="font-family:'Amiri',serif;font-size:1.2rem;color:var(--gold-l)">${n.n}</div>
+      <div class="nwest">${n.w}</div>
+    </div>`).join('');
+  document.getElementById('dayGrid').innerHTML=DAYS.map(d=>`
+    <div class="dmcard" data-a="${d.a}" data-e="${d.e}" onclick="spkDay(this)">
+      <span class="dmnum">${d.em}</span>
+      <div><div class="dmar">${d.a}</div><div class="dmen">${d.e}</div></div>
+    </div>`).join('');
+  document.getElementById('monGrid').innerHTML=MONTHS.map(m=>`
+    <div class="dmcard" data-a="${m.a}" data-e="${m.e}" onclick="spkDay(this)">
+      <span class="dmnum">${m.em}</span>
+      <div><div class="dmar">${m.a}</div><div class="dmen">${m.e}</div></div>
+    </div>`).join('');
+  document.getElementById('clrGrid').innerHTML=COLORS.map(c=>`
+    <div class="clrcard" style="background:${c.bg};color:${c.txt}" data-a="${c.a}" data-e="${c.e}" onclick="spkDay(this)">
+      <div style="font-family:'Amiri',serif;font-size:1.4rem;margin-bottom:4px">${c.a}</div>
+      <div style="font-size:.75rem;opacity:.85">${c.e}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  PHRASES
+// ═══════════════════════════════════════════════
+function renderPhFltrs(){
+  const cats=['الكل',...new Set(PHRASES.map(p=>p.cat))];
+  document.getElementById('phFltrs').innerHTML=cats.map(c=>`<button class="fbtn${c==='الكل'?' on':''}" onclick="setPhF('${c}',this)">${c}</button>`).join('');
+}
+let phFlt='الكل';
+function setPhF(c,b){phFlt=c;document.querySelectorAll('#phFltrs .fbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderPhrases();}
+function renderPhrases(){
+  const arr=PHRASES.filter(p=>phFlt==='الكل'||p.cat===phFlt);
+  document.getElementById('phList').innerHTML=arr.map((p,i)=>{
+    const safeA=p.a.replace(/'/g,"&#39;");
+    return `<div class="phbox" data-ph="${i}" onclick="spkPh(${i})">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div>
+          <div class="phar">${p.a}</div>
+          <div class="phen">${p.e}</div>
+          <div class="phtip">💡 ${p.tip}</div>
+        </div>
+        <button class="btn bg" style="padding:6px 13px;font-size:.8rem;flex-shrink:0" onclick="event.stopPropagation();spkPh(${i})">🔊</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function spkPh(i){
+  const arr=PHRASES.filter(p=>phFlt==='الكل'||p.cat===phFlt);
+  if(arr[i]){spk(arr[i].a);toast('🔊 '+arr[i].a);}
+}
+
+// ═══════════════════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════════════════
+function buildQ(){
+  const lq=LTR.map(l=>({q:l.l,a:l.n,t:'حرف',speak:l.n}));
+  const vq=VOCAB.filter(v=>v.c!=='ألوان').map(v=>({q:v.a,a:v.e,t:'مفردات',speak:v.a}));
+  const nq=NUMS.map(n=>({q:n.n,a:n.nm,t:'أعداد',speak:n.nm}));
+  const pq=PHRASES.slice(0,15).map(p=>({q:p.a,a:p.e,t:'عبارات',speak:p.a}));
+  const all=[...lq,...vq,...nq,...pq].sort(()=>Math.random()-.5);
+  qData=qType==='all'?all:all.filter(q=>q.t===qType);
+  if(!qData.length)qData=all;
+  qIdx=0;
+}
+
+const QT_LABELS={all:'الكل',حرف:'الحروف',مفردات:'المفردات',أعداد:'الأعداد',عبارات:'العبارات'};
+function renderQFltrs(){
+  document.getElementById('qTypeFltrs').innerHTML=['all','حرف','مفردات','أعداد','عبارات'].map(t=>`<button class="fbtn${t===qType?' on':''}" onclick="setQType('${t}',this)">${QT_LABELS[t]}</button>`).join('');
+}
+function setQType(t,b){qType=t;document.querySelectorAll('#qTypeFltrs .fbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');buildQ();showQ();}
+
+function showQ(){
+  if(qIdx>=qData.length){buildQ();}
+  curQ=qData[qIdx];
+  document.getElementById('qQ').textContent=curQ.q;
+  const sub={حرف:'ما اسم هذا الحرف؟',مفردات:'ما معنى هذه الكلمة بالإنجليزية؟',أعداد:'ما اسم هذا العدد؟',عبارات:'ما معنى هذه العبارة؟'};
+  document.getElementById('qSub').textContent=sub[curQ.t]||'ما الإجابة الصحيحة؟';
+  const pool=qData.filter(q=>q.t===curQ.t&&q.a!==curQ.a).sort(()=>Math.random()-.5).slice(0,3).map(q=>q.a);
+  const opts=[...pool,curQ.a].sort(()=>Math.random()-.5);
+  document.getElementById('qOpts').innerHTML=opts.map(o=>`<button class="qopt" onclick="chkQ(this,'${o.replace(/'/g,"\\'")}','${curQ.a.replace(/'/g,"\\'")}')">  ${o}</button>`).join('');
+}
+
+function chkQ(btn,ch,co){
+  document.querySelectorAll('.qopt').forEach(b=>b.disabled=true);
+  qS.t++;
+  if(ch===co){btn.classList.add('ok');qS.c++;correctBeep();toast('✅ إجابة صحيحة! +١٠ نقطة');if(notifOn)spk('ممتاز إجابة صحيحة');}
+  else{btn.classList.add('no');qS.w++;wrongBeep();document.querySelectorAll('.qopt').forEach(b=>{if(b.textContent.trim()===co)b.classList.add('ok');});toast('❌ الصحيح: '+co);if(notifOn)spk('الإجابة الصحيحة هي '+co);}
+  document.getElementById('qC').textContent=an(qS.c);
+  document.getElementById('qW').textContent=an(qS.w);
+  document.getElementById('qT').textContent=an(qS.t);
+  const p=qS.t?Math.round(qS.c/qS.t*100):0;
+  document.getElementById('qP').textContent=an(p)+'٪';
+  if(qS.t>0&&qS.t%10===0&&qS.c/qS.t>=.8){successBeep();toast('🏆 رائع! دقة '+an(p)+'٪ في العشرة الأخيرة!');}
+}
+function nextQ(){qIdx++;showQ();}
+function spkCurQ(){if(curQ)spk(curQ.speak||curQ.q);}
+function resetQScore(){qS={c:0,w:0,t:0};['qC','qW','qT'].forEach(id=>document.getElementById(id).textContent='0');document.getElementById('qP').textContent='-';buildQ();showQ();toast('🔄 تم إعادة تعيين النتيجة');}
+
+// ═══════════════════════════════════════════════
+//  STORIES
+// ═══════════════════════════════════════════════
+function renderStories(){
+  document.getElementById('sList').innerHTML=STORIES.map((s,i)=>`
+    <div class="scard" onclick="openS(${i})">
+      <div style="display:flex;gap:7px;margin-bottom:7px;flex-wrap:wrap">
+        <span style="padding:3px 11px;border-radius:50px;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.07);color:${s.col}">${s.lv}</span>
+        <span style="font-size:.76rem;color:var(--dim)">📖 مع قاموس الدرس</span>
+      </div>
+      <div class="stit">${s.t}</div>
+      <div class="sprev">${s.prev}</div>
+    </div>`).join('');
+}
+function openS(i){
+  const s=STORIES[i];
+  window._curStory=i;
+  document.getElementById('sList').style.display='none';
+  const r=document.getElementById('sRdr');
+  r.innerHTML=`
+    <button class="bbtn" onclick="closeS()">← العودة للقصص</button>
+    <div class="stit" style="font-size:1.65rem;margin-bottom:16px">${s.t}</div>
+    <div class="stxt">${s.body.replace(/\n/g,'<br><br>')}</div>
+    <div style="margin-top:20px;padding-top:17px;border-top:1px solid var(--border)">
+      <div style="font-weight:700;margin-bottom:9px;color:var(--gold-l)">📌 كلمات الدرس — اضغط لتستمع:</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        ${s.words.map(w=>`<span onclick="spk('${w}')" style="background:rgba(201,168,76,.1);border:1px solid var(--border);padding:4px 13px;border-radius:50px;font-family:'Amiri',serif;font-size:.98rem;color:var(--gold-l);cursor:pointer">${w}</span>`).join('')}
+      </div>
+      <div style="display:flex;gap:9px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn bg" onclick="spkStory(${i})">🔊 استمع للقصة كاملة</button>
+        <button class="btn bo" onclick="spkStoryTitle(${i})">🔊 العنوان فقط</button>
+      </div>
+    </div>`;
+  r.classList.add('op');
+  spk(s.t+'. '+s.prev);
+}
+function closeS(){document.getElementById('sList').style.display='block';document.getElementById('sRdr').classList.remove('op');}
+
+// ═══════════════════════════════════════════════
+//  SPELL CHECK
+// ═══════════════════════════════════════════════
+function doSpell(){
+  const txt=document.getElementById('spTxt').value.trim();
+  if(!txt){toast('⚠️ اكتب نصاً أولاً');return;}
+  const words=txt.split(/\s+/);
+  const errs=[];
+  let corrected=txt;
+  words.forEach(w=>{
+    const cl=w.replace(/[،.؟!,\n]/g,'');
+    const f=SPELL_DB.find(e=>e.w===cl);
+    if(f&&f.c!==cl){errs.push({...f,orig:w});corrected=corrected.replace(new RegExp(cl,'g'),f.c);}
+  });
+  spCorrected=corrected;
+  const res=document.getElementById('spRes');
+  if(!errs.length){
+    res.innerHTML=`<div class="sclean">✅ ممتاز! النص خالٍ من الأخطاء الشائعة.</div>`;
+    successBeep();spk('ممتاز النص خالٍ من الأخطاء');
+  } else {
+    res.innerHTML=`
+      <div style="font-weight:700;margin-bottom:11px;color:var(--rose)">⚠️ وُجد ${an(errs.length)} خطأ محتمل:</div>
+      ${errs.map(e=>`<div class="serr"><span>❌</span><div><strong style="color:var(--rose)">${e.orig}</strong><span style="color:var(--dim)"> ← الصحيح: </span><strong style="color:var(--teal)">${e.c}</strong><div style="font-size:.78rem;color:var(--dim);margin-top:2px">📌 ${e.t}</div></div></div>`).join('')}
+      <div class="ssugg"><strong style="color:var(--teal)">✏️ النص المصحَّح:</strong><div style="margin-top:7px;font-family:'Amiri',serif;font-size:1.12rem;line-height:2">${errs.reduce((t,e)=>t.replace(new RegExp(e.orig,'g'),`<span style="color:var(--teal);font-weight:700">${e.c}</span>`),txt)}</div></div>`;
+    wrongBeep();spk('تم العثور على '+errs.length+' خطأ في النص');
+  }
+}
+function clearSp(){document.getElementById('spTxt').value='';document.getElementById('spRes').innerHTML='';spCorrected='';}
+function spkSp(){const t=document.getElementById('spTxt').value.trim();if(t)spk(t);else toast('⚠️ اكتب نصاً أولاً');}
+function copySpell(){if(spCorrected){navigator.clipboard.writeText(spCorrected).then(()=>toast('📋 تم نسخ النص المصحَّح')).catch(()=>toast('⚠️ لا يمكن النسخ تلقائياً'));}else toast('⚠️ دقّق النص أولاً');}
+function renderComErr(){document.getElementById('comErr').innerHTML=COM_ERR.map(e=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(255,255,255,.04);border-radius:9px;margin-bottom:7px;flex-wrap:wrap;gap:7px"><span style="font-family:'Amiri',serif;font-size:1rem;color:var(--text)">${e.w}</span><span style="font-size:.76rem;color:var(--dim);background:rgba(255,255,255,.06);padding:2px 9px;border-radius:50px">${e.r}</span></div>`).join('');}
+function renderSpRules(){document.getElementById('spRules').innerHTML=SP_RULES.map(r=>`<div style="margin-bottom:13px;padding:13px;background:rgba(201,168,76,.06);border-radius:12px;border-right:3px solid var(--gold)"><strong style="color:var(--gold-l)">${r.t}</strong><p style="font-size:.84rem;color:var(--dim);margin:5px 0">${r.r}</p><span style="font-family:'Amiri',serif;font-size:.95rem;color:var(--teal)">${r.ex}</span></div>`).join('');}
+
+// ═══════════════════════════════════════════════
+//  CONTROL PANEL
+// ═══════════════════════════════════════════════
+function openCP(){document.getElementById('cpanel').classList.add('op');document.getElementById('cpOvl').classList.add('sh');}
+function closeCP(){document.getElementById('cpanel').classList.remove('op');document.getElementById('cpOvl').classList.remove('sh');}
+function setTheme(t,b){document.body.setAttribute('data-theme',t);document.querySelectorAll('[id^=th]').forEach(x=>x.classList.remove('s'));b.classList.add('s');toast('🎨 تم تغيير السمة');}
+function setFS(v){document.documentElement.style.setProperty('--fs',v+'px');document.getElementById('fLbl').textContent=an(v)+' بكسل';}
+function setAcc(g,gl,gd,el){document.documentElement.style.setProperty('--gold',g);document.documentElement.style.setProperty('--gold-l',gl);document.documentElement.style.setProperty('--gold-d',gd);document.querySelectorAll('.cc').forEach(c=>c.classList.remove('s'));el.classList.add('s');toast('🌟 تم تغيير اللون');}
+function setVoice(on,b){voiceOn=on;stopAudio();document.getElementById('vOn').classList.toggle('s',on);document.getElementById('vOff').classList.toggle('s',!on);document.getElementById('vStatus').textContent=on?'🔊':'🔇';stopSpkAnim();if(on)spk('تم تفعيل الصوت');toast(on?'🔊 الصوت مفعّل':'🔇 الصوت موقوف');}
+function setRate(v){speechRate=parseFloat(v);document.getElementById('rLbl').textContent=an(v)+'×';}
+function setPitch(v){speechPitch=parseFloat(v);document.getElementById('pLbl').textContent=an(v)+'×';}
+function setFX(on,b){fxOn=on;document.getElementById('fxOn').classList.toggle('s',on);document.getElementById('fxOff').classList.toggle('s',!on);if(!on)ctx2.clearRect(0,0,cvs.width,cvs.height);toast(on?'✨ المؤثرات مفعلة':'المؤثرات موقوفة');}
+function setLyt(t,b){document.querySelectorAll('#cpanel .cpBtn').forEach(x=>{if(x.textContent.includes('شبكة')||x.textContent.includes('قائمة'))x.classList.remove('s')});b.classList.add('s');const vg=document.getElementById('vGrid');if(vg)vg.style.gridTemplateColumns=t==='list'?'1fr':'repeat(auto-fill,minmax(195px,1fr))';toast(t==='list'?'☰ عرض القائمة':'▦ عرض الشبكة');}
+function setNt(on,b){notifOn=on;document.getElementById('ntOn').classList.toggle('s',on);document.getElementById('ntOff').classList.toggle('s',!on);toast(on?'🔔 الإشعارات مفعلة':'🔕 الإشعارات موقوفة');}
+
+// ═══════════════════════════════════════════════
+//  SECURITY
+// ═══════════════════════════════════════════════
+function openSec(){document.getElementById('secMod').classList.add('op');}
+function closeSec(){document.getElementById('secMod').classList.remove('op');}
+document.getElementById('secMod').addEventListener('click',function(e){if(e.target===this)closeSec();});
+
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+function toast(msg){const t=document.getElementById('tip');t.textContent=msg;t.classList.add('sh');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('sh'),2800);}
+
+
+// ═══════════════════════════════════════════════
+//  DATA-ATTRIBUTE CLICK HELPERS (safe from quote issues)
+// ═══════════════════════════════════════════════
+function spkStory(i){if(STORIES[i]){spk(STORIES[i].body.replace(/\n/g,' '));}}
+function spkStoryTitle(i){if(STORIES[i]){spk(STORIES[i].t);}}
+function spkVoc(el){
+  const a=el.getAttribute('data-a');const e=el.getAttribute('data-e');
+  if(a){spk(a);toast('🔊 '+a+' = '+e);}
+}
+function spkDia(el){
+  const n=el.getAttribute('data-n');const d=el.getAttribute('data-d');
+  if(n){spk(n+'. '+d);}
+}
+function spkNum(el){
+  const nm=el.getAttribute('data-nm');const n=el.getAttribute('data-n');
+  if(nm){spk(nm);toast(n+' = '+nm);}
+}
+function spkDay(el){
+  const a=el.getAttribute('data-a');const e=el.getAttribute('data-e');
+  if(a){spk(a);toast(a+' = '+e);}
+}
+function spkG(i,type){
+  if(GRAMMAR[i]){
+    if(type===0)spk(GRAMMAR[i].t+'. '+GRAMMAR[i].b);
+    else spk(GRAMMAR[i].e.replace(/•/g,'،'));
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+renderAlpha();renderDia();
+renderVFltrs();filtV('');
+renderGrammar();
+renderNums();
+renderPhFltrs();renderPhrases();
+renderQFltrs();buildQ();showQ();
+renderStories();
+renderComErr();renderSpRules();
+
+
+
+// ═══ تفعيل الصوت بلمسة المستخدم ═══
+function activateSound(){
+  // 1. فتح AudioContext
+  try{ getACtx(); }catch(e){}
+
+  // 2. تهيئة ResponsiveVoice
+  if(window.responsiveVoice){
+    try{ responsiveVoice.init(); }catch(e){}
+  }
+
+  // 3. تحميل أصوات Web Speech API
+  if(window.speechSynthesis){
+    try{
+      // لمسة صامتة لفتح القفل على iOS
+      var u=new SpeechSynthesisUtterance(' ');
+      u.volume=0; u.lang='ar';
+      window.speechSynthesis.speak(u);
+      window.speechSynthesis.cancel();
+      // تحميل الأصوات
+      loadVoices();
+      setTimeout(loadVoices, 500);
+    }catch(e){}
+  }
+
+  // 4. إغلاق الشاشة
+  document.getElementById('sndOverlay').style.display='none';
+
+  // 5. ترحيب صوتي
+  setTimeout(function(){
+    spk('أهلاً وسهلاً بك في تطبيق تعلم اللغة العربية. تصميم وإعداد الأستاذ خليل محمد خليل عطيلة.');
+  }, 500);
+}
+</script>
+</body>
+</html>
